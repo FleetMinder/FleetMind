@@ -312,3 +312,17 @@ model ActivityLog {
   @@index([companyId])
   @@index([createdAt])
 }
+
+model LoginLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  email     String
+  ip        String?
+  userAgent String?
+  success   Boolean
+  motivo    String?  // es: "magic_link", "token_expired", "rate_limited"
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}

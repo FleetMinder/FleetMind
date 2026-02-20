@@ -19,6 +19,7 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: {}, // Non usato, usiamo sendVerificationRequest custom
       from: "FleetMind <onboarding@resend.dev>",
+      maxAge: 15 * 60, // Magic link scade dopo 15 minuti
       sendVerificationRequest: async ({ identifier: email, url }) => {
         // Se Resend API key è configurata, invia email
         if (process.env.RESEND_API_KEY) {
@@ -42,7 +43,7 @@ export const authOptions: NextAuthOptions = {
                     Accedi a FleetMind
                   </a>
                   <p style="color: #94a3b8; font-size: 12px; margin: 24px 0 0;">
-                    Il link scade tra 24 ore. Se non hai richiesto questo accesso, ignora questa email.
+                    Il link scade tra 15 minuti. Se non hai richiesto questo accesso, ignora questa email.
                   </p>
                 </div>
               </div>
@@ -60,6 +61,23 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  events: {
+    async signIn({ user }) {
+      // Log accesso riuscito
+      try {
+        await prisma.loginLog.create({
+          data: {
+            userId: user.id,
+            email: user.email || "",
+            success: true,
+            motivo: "magic_link",
+          },
+        });
+      } catch (e) {
+        console.error("Errore log accesso:", e);
+      }
+    },
+  },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
