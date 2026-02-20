@@ -25,7 +25,9 @@ import {
   Plus,
   MapPin,
   Shield,
+  Users,
 } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
 import { format, differenceInDays } from "date-fns";
 
 interface Driver {
@@ -255,7 +257,19 @@ export default function DriversPage() {
         </div>
       )}
 
+      {/* Empty state */}
+      {drivers.length === 0 && (
+        <EmptyState
+          icon={Users}
+          title="Nessun autista registrato"
+          description="Aggiungi il tuo primo autista per iniziare a pianificare i viaggi con AI Dispatch."
+          actionLabel="Aggiungi Autista"
+          onAction={() => setDialogOpen(true)}
+        />
+      )}
+
       {/* Driver cards grid */}
+      {drivers.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         {drivers.map((driver) => {
           const badge = statoBadge[driver.stato] || statoBadge.non_disponibile;
@@ -335,6 +349,7 @@ export default function DriversPage() {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

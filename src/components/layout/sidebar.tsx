@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -13,6 +14,7 @@ import {
   Settings,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -29,7 +31,17 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Dati utente dalla sessione
+  const userName = session?.user?.nome && session?.user?.cognome
+    ? `${session.user.nome} ${session.user.cognome}`
+    : session?.user?.email || "Utente";
+
+  const initials = session?.user?.nome && session?.user?.cognome
+    ? `${session.user.nome[0]}${session.user.cognome[0]}`.toUpperCase()
+    : session?.user?.email?.[0]?.toUpperCase() || "U";
 
   return (
     <>
@@ -103,19 +115,30 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* Company info */}
-          <div className="px-4 py-4 border-t border-border">
+          {/* User info + Logout */}
+          <div className="px-4 py-4 border-t border-border space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                <span className="text-xs font-bold text-foreground">TB</span>
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-primary">{initials}</span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
-                  Trasporti Bianchi
+                  {userName}
                 </p>
-                <p className="text-xs text-muted-foreground">Admin</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {session?.user?.email || ""}
+                </p>
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-muted-foreground hover:text-red-400"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Esci
+            </Button>
           </div>
         </div>
       </aside>

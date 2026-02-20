@@ -28,6 +28,7 @@ import {
   Euro,
   MessageSquare,
 } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
 
 interface Partner {
   id: string;
@@ -213,7 +214,19 @@ export default function PartnersPage() {
         </Dialog>
       </PageHeader>
 
+      {/* Empty state */}
+      {partners.length === 0 && (
+        <EmptyState
+          icon={Handshake}
+          title="Nessun partner"
+          description="Aggiungi i tuoi vettori partner per gestire le collaborazioni e le spedizioni esterne."
+          actionLabel="Aggiungi Partner"
+          onAction={() => setDialogOpen(true)}
+        />
+      )}
+
       {/* Partners grid */}
+      {partners.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {partners.map((partner) => (
           <Card key={partner.id} className="overflow-hidden">
@@ -306,6 +319,7 @@ export default function PartnersPage() {
           </Card>
         ))}
       </div>
+      )}
     </div>
   );
 }

@@ -25,6 +25,7 @@ import {
 import { PageHeader } from "@/components/layout/page-header";
 import { CardGridSkeleton } from "@/components/shared/loading-skeleton";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   Truck,
   Snowflake,
@@ -226,7 +227,19 @@ export default function VehiclesPage() {
         </Dialog>
       </PageHeader>
 
+      {/* Empty state */}
+      {vehicles.length === 0 && (
+        <EmptyState
+          icon={Truck}
+          title="Nessun mezzo registrato"
+          description="Aggiungi il tuo primo veicolo per iniziare a gestire la flotta."
+          actionLabel="Aggiungi Mezzo"
+          onAction={() => setDialogOpen(true)}
+        />
+      )}
+
       {/* Vehicle grid */}
+      {vehicles.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
         {vehicles.map((v) => {
           const badge = statoBadge[v.stato] || statoBadge.disponibile;
@@ -293,6 +306,7 @@ export default function VehiclesPage() {
           );
         })}
       </div>
+      )}
 
       {/* Maintenance detail dialog */}
       <Dialog open={!!detailVehicle} onOpenChange={() => setDetailVehicle(null)}>

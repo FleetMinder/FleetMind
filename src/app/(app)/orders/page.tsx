@@ -42,6 +42,7 @@ import {
   Snowflake,
   AlertTriangle,
 } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
@@ -598,15 +599,17 @@ export default function OrdersPage() {
           {loading ? (
             <TableSkeleton rows={6} cols={8} />
           ) : orders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Package className="h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-semibold text-foreground">Nessun ordine trovato</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {filtroStato !== "tutti" || filtroUrgenza !== "tutti"
+            <EmptyState
+              icon={Package}
+              title="Nessun ordine"
+              description={
+                filtroStato !== "tutti" || filtroUrgenza !== "tutti"
                   ? "Prova a modificare i filtri per vedere altri risultati."
-                  : "Crea il tuo primo ordine cliccando su \"Nuovo Ordine\"."}
-              </p>
-            </div>
+                  : "Crea il tuo primo ordine di trasporto. Dopo aver creato almeno un ordine, potrai usare AI Dispatch per pianificare i viaggi."
+              }
+              actionLabel={filtroStato === "tutti" && filtroUrgenza === "tutti" ? "Nuovo Ordine" : undefined}
+              onAction={filtroStato === "tutti" && filtroUrgenza === "tutti" ? () => setDialogOpen(true) : undefined}
+            />
           ) : (
             <Table>
               <TableHeader>

@@ -17,7 +17,10 @@ import {
   CheckCircle2,
   Truck,
   Brain,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
 
@@ -95,6 +98,7 @@ export default function Dashboard() {
   }
 
   const { kpi } = data;
+  const isEmpty = kpi.autistiTotali === 0 && kpi.mezziTotali === 0 && kpi.ordiniPending === 0;
 
   return (
     <div>
@@ -102,6 +106,48 @@ export default function Dashboard() {
         title="Dashboard"
         description="Panoramica operativa in tempo reale"
       />
+
+      {/* Welcome banner for empty state */}
+      {isEmpty && (
+        <div className="mb-6 rounded-xl border border-blue-500/20 bg-gradient-to-r from-blue-500/5 via-blue-600/5 to-purple-500/5 p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="h-6 w-6 text-blue-400" />
+            </div>
+            <div className="space-y-3">
+              <div>
+                <h3 className="text-lg font-semibold">Benvenuto in FleetMind!</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  La tua piattaforma e pronta. Inizia configurando la tua flotta per sfruttare la pianificazione AI.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/drivers">
+                  <span className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 font-medium">
+                    <Users className="h-4 w-4" />
+                    Aggiungi Autisti
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </Link>
+                <Link href="/vehicles">
+                  <span className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 font-medium">
+                    <Truck className="h-4 w-4" />
+                    Aggiungi Mezzi
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </Link>
+                <Link href="/orders">
+                  <span className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 font-medium">
+                    <Package className="h-4 w-4" />
+                    Crea Ordini
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
