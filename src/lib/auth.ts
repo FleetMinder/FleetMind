@@ -1,6 +1,7 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import EmailProvider from "next-auth/providers/email";
+import { Resend } from "resend";
 import { prisma } from "./prisma";
 
 export const authOptions: NextAuthOptions = {
@@ -16,30 +17,47 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     EmailProvider({
-      server: process.env.EMAIL_SERVER_HOST
-        ? {
-            host: process.env.EMAIL_SERVER_HOST,
-            port: Number(process.env.EMAIL_SERVER_PORT) || 465,
-            auth: {
-              user: process.env.EMAIL_SERVER_USER || "",
-              pass: process.env.EMAIL_SERVER_PASSWORD || "",
-            },
-          }
-        : undefined as unknown as string,
-      from: process.env.EMAIL_FROM || "FleetMind <noreply@fleetmind.it>",
-      ...(process.env.EMAIL_SERVER_HOST
-        ? {}
-        : {
-            sendVerificationRequest: async ({ identifier: email, url }) => {
-              // Dev mode: stampa il link in console
-              console.log("\n╔══════════════════════════════════════════╗");
-              console.log("║        MAGIC LINK (solo sviluppo)        ║");
-              console.log("╠══════════════════════════════════════════╣");
-              console.log(`║ Email: ${email}`);
-              console.log(`║ Link:  ${url}`);
-              console.log("╚══════════════════════════════════════════╝\n");
-            },
-          }),
+      server: {}, // Non usato, usiamo sendVerificationRequest custom
+      from: "FleetMind <onboarding@resend.dev>",
+      sendVerificationRequest: async ({ identifier: email, url }) => {
+        // Se Resend API key è configurata, invia email
+        if (process.env.RESEND_API_KEY) {
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          await resend.emails.send({
+            from: "FleetMind <onboarding@resend.dev>",
+            to: email,
+            subject: "Accedi a FleetMind",
+            html: `
+              <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 40px 20px;">
+                <div style="text-align: center; margin-bottom: 32px;">
+                  <h1 style="color: #1e293b; font-size: 24px; margin: 0;">FleetMind</h1>
+                  <p style="color: #64748b; font-size: 13px; margin: 4px 0 0;">AI Dispatch Planner</p>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; text-align: center;">
+                  <h2 style="color: #1e293b; font-size: 18px; margin: 0 0 8px;">Il tuo link di accesso</h2>
+                  <p style="color: #64748b; font-size: 14px; margin: 0 0 24px;">
+                    Clicca il bottone qui sotto per accedere a FleetMind.
+                  </p>
+                  <a href="${url}" style="display: inline-block; background: #3b82f6; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                    Accedi a FleetMind
+                  </a>
+                  <p style="color: #94a3b8; font-size: 12px; margin: 24px 0 0;">
+                    Il link scade tra 24 ore. Se non hai richiesto questo accesso, ignora questa email.
+                  </p>
+                </div>
+              </div>
+            `,
+          });
+        } else {
+          // Dev mode: stampa il link in console
+          console.log("\n╔══════════════════════════════════════════╗");
+          console.log("║        MAGIC LINK (solo sviluppo)        ║");
+          console.log("╠══════════════════════════════════════════╣");
+          console.log(`║ Email: ${email}`);
+          console.log(`║ Link:  ${url}`);
+          console.log("╚══════════════════════════════════════════╝\n");
+        }
+      },
     }),
   ],
   callbacks: {
