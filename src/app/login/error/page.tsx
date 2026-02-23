@@ -11,6 +11,9 @@ const errorMessages: Record<string, string> = {
   Configuration: "Errore di configurazione del server. Contatta il supporto.",
   AccessDenied: "Accesso negato. Non hai i permessi per accedere.",
   Verification: "Il link di verifica non è valido o è scaduto. Richiedi un nuovo link.",
+  OAuthSignin: "Errore nell'avvio del login con Google. Riprova.",
+  OAuthCallback: "Errore nella risposta da Google. Riprova.",
+  OAuthAccountNotLinked: "Questa email è già associata ad un altro metodo di accesso.",
   Default: "Si è verificato un errore durante l'autenticazione.",
 };
 

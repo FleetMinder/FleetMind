@@ -1,6 +1,7 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import EmailProvider from "next-auth/providers/email";
+import GoogleProvider from "next-auth/providers/google";
 import { Resend } from "resend";
 import { prisma } from "./prisma";
 
@@ -16,6 +17,17 @@ export const authOptions: NextAuthOptions = {
     error: "/login/error",
   },
   providers: [
+    // Google OAuth (abilitato se le credenziali sono configurate)
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+          }),
+        ]
+      : []),
+    // Magic Link via Email
     EmailProvider({
       server: {}, // Non usato, usiamo sendVerificationRequest custom
       from: "FleetMind <onboarding@resend.dev>",
@@ -62,7 +74,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   events: {
-    async signIn({ user }) {
+    async signIn({ user, account }) {
       // Log accesso riuscito
       try {
         await prisma.loginLog.create({
@@ -70,7 +82,7 @@ export const authOptions: NextAuthOptions = {
             userId: user.id,
             email: user.email || "",
             success: true,
-            motivo: "magic_link",
+            motivo: account?.provider || "unknown",
           },
         });
       } catch (e) {
@@ -79,13 +91,20 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session, account }) {
       if (user) {
         token.id = user.id;
         token.companyId = user.companyId;
         token.ruolo = user.ruolo;
-        token.nome = user.nome;
-        token.cognome = user.cognome;
+
+        // Per Google OAuth, popola nome/cognome dall'account Google
+        if (account?.provider === "google") {
+          token.nome = user.name?.split(" ")[0] || user.nome || null;
+          token.cognome = user.name?.split(" ").slice(1).join(" ") || user.cognome || null;
+        } else {
+          token.nome = user.nome;
+          token.cognome = user.cognome;
+        }
 
         // Check onboarding status
         if (user.companyId) {

@@ -11,9 +11,10 @@ import { toast } from "sonner";
 
 interface Props {
   onComplete: (companyName: string) => void;
+  onSkip?: () => void;
 }
 
-export function StepCompany({ onComplete }: Props) {
+export function StepCompany({ onComplete, onSkip }: Props) {
   const { update } = useSession();
   const [saving, setSaving] = useState(false);
 
@@ -132,19 +133,26 @@ export function StepCompany({ onComplete }: Props) {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={saving}>
-            {saving ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Salvataggio...
-              </>
-            ) : (
-              <>
-                Continua
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </>
+          <div className="flex gap-3">
+            {onSkip && (
+              <Button type="button" variant="ghost" onClick={onSkip} disabled={saving} className="flex-1">
+                Salta
+              </Button>
             )}
-          </Button>
+            <Button type="submit" className="flex-1" disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Salvataggio...
+                </>
+              ) : (
+                <>
+                  Continua
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </>
+              )}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
