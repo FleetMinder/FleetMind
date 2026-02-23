@@ -111,6 +111,8 @@ export default function DriversPage() {
       telefono: form.get("telefono") || null,
       cartaCQC: form.get("cartaCQC") || null,
       cqcScadenza: form.get("cqcScadenza") || null,
+      adrPatentino: form.get("adrPatentino") || null,
+      adrScadenza: form.get("adrScadenza") || null,
     };
 
     try {
@@ -214,6 +216,16 @@ export default function DriversPage() {
                 <div>
                   <Label htmlFor="cqcScadenza">Scadenza CQC</Label>
                   <Input id="cqcScadenza" name="cqcScadenza" type="date" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="adrPatentino">Patentino ADR</Label>
+                  <Input id="adrPatentino" name="adrPatentino" placeholder="Opzionale" />
+                </div>
+                <div>
+                  <Label htmlFor="adrScadenza">Scadenza ADR</Label>
+                  <Input id="adrScadenza" name="adrScadenza" type="date" />
                 </div>
               </div>
               <div>

@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
         patenteScadenza: new Date(body.patenteScadenza),
         tachigrafoScadenza: new Date(body.tachigrafoScadenza),
         cqcScadenza: body.cqcScadenza ? new Date(body.cqcScadenza) : null,
+        adrScadenza: body.adrScadenza ? new Date(body.adrScadenza) : null,
       },
     });
 

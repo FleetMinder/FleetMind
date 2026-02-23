@@ -99,8 +99,12 @@ model Driver {
   patenteScadenza       DateTime
   cartaCQC              String?
   cqcScadenza           DateTime?
+  cartaCQCTipo          String?      // merci, persone
+  adrPatentino          String?      // numero patentino ADR
+  adrScadenza           DateTime?
   tachigrafoScadenza    DateTime
   oreGuidaSettimana     Float        @default(0)
+  oreGuidaGiorno        Float        @default(0)
   oreRiposoRimanenti    Float        @default(11)
   stato                 DriverStatus @default(disponibile)
   telefono              String?
@@ -136,8 +140,14 @@ model Vehicle {
   consumoKmL       Float?        // consumo carburante km/litro
   stato            VehicleStatus @default(disponibile)
   kmAttuali        Int           @default(0)
+  classeEuro       String?       // Euro 3, 4, 5, 6, 6E
+  pesoComplessivoKg Float?       // PTT - peso totale a terra
+  assicurazioneScadenza DateTime?
+  bolloScadenza     DateTime?
   prossimaRevisione DateTime?
   prossimaManutenzione DateTime?
+  adrAbilitato     Boolean       @default(false)
+  adrScadenza      DateTime?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
@@ -325,4 +335,25 @@ model LoginLog {
 
   @@index([email])
   @@index([createdAt])
+}
+
+// ========== Compliance Models ==========
+
+model ComplianceAlert {
+  id          String   @id @default(cuid())
+  companyId   String
+  tipo        String   // scadenza_patente, scadenza_cqc, scadenza_tachigrafo, scadenza_revisione, scadenza_assicurazione, scadenza_bollo, scadenza_adr, ore_guida_limite, euro5_ban, tariffa_sotto_costo
+  severity    String   // critico, avviso, info
+  entitaTipo  String   // driver, vehicle, order
+  entitaId    String
+  entitaNome  String   // nome leggibile (es: "Mario Rossi", "AB123CD")
+  messaggio   String
+  dataScadenza DateTime?
+  risolto     Boolean  @default(false)
+  risoltoAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([companyId])
+  @@index([companyId, risolto])
+  @@index([severity])
 }

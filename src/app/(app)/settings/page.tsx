@@ -80,7 +80,7 @@ export default function SettingsPage() {
   // Form state
   const [companyForm, setCompanyForm] = useState<Partial<Company>>({});
   const [apiKey, setApiKey] = useState("");
-  const [orsKey, setOrsKey] = useState("");
+  const [googleMapsKey, setGoogleMapsKey] = useState("");
   const [costoCarburante, setCostoCarburante] = useState("1.85");
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function SettingsPage() {
         setData(data);
         setCompanyForm(data.company);
         setApiKey(data.settings.anthropic_api_key || "");
-        setOrsKey(data.settings.ors_api_key || "");
+        setGoogleMapsKey(data.settings.google_maps_api_key || "");
         setCostoCarburante(data.settings.costo_carburante_litro || "1.85");
       })
       .catch(() => toast.error("Errore nel caricamento delle impostazioni"))
@@ -114,7 +114,7 @@ export default function SettingsPage() {
           },
           settings: {
             anthropic_api_key: apiKey,
-            ors_api_key: orsKey,
+            google_maps_api_key: googleMapsKey,
             costo_carburante_litro: costoCarburante,
           },
         }),
@@ -274,17 +274,19 @@ export default function SettingsPage() {
             </div>
             <Separator />
             <div>
-              <Label htmlFor="orsKey">OpenRouteService API Key</Label>
+              <Label htmlFor="googleMapsKey" className="flex items-center gap-2">
+                Google Maps API Key
+              </Label>
               <Input
-                id="orsKey"
+                id="googleMapsKey"
                 type="password"
-                value={orsKey}
-                onChange={(e) => setOrsKey(e.target.value)}
-                placeholder="La tua API key ORS..."
+                value={googleMapsKey}
+                onChange={(e) => setGoogleMapsKey(e.target.value)}
+                placeholder="AIza..."
                 className="mt-1"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Per il calcolo rotte e distanze. Gratuita su openrouteservice.org
+                Per routing reale, distanze e pedaggi. Ottieni una chiave su console.cloud.google.com
               </p>
             </div>
             <Separator />

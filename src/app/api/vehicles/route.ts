@@ -41,6 +41,12 @@ export async function POST(request: NextRequest) {
         prossimaRevisione: body.prossimaRevisione
           ? new Date(body.prossimaRevisione)
           : null,
+        assicurazioneScadenza: body.assicurazioneScadenza
+          ? new Date(body.assicurazioneScadenza)
+          : null,
+        bolloScadenza: body.bolloScadenza
+          ? new Date(body.bolloScadenza)
+          : null,
       },
     });
 

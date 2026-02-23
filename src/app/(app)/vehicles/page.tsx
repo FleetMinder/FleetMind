@@ -125,7 +125,11 @@ export default function VehiclesPage() {
       capacitaPesoKg: parseFloat(form.get("capacitaPesoKg") as string),
       capacitaVolumeM3: parseFloat(form.get("capacitaVolumeM3") as string),
       consumoKmL: form.get("consumoKmL") ? parseFloat(form.get("consumoKmL") as string) : null,
+      pesoComplessivoKg: form.get("pesoComplessivoKg") ? parseFloat(form.get("pesoComplessivoKg") as string) : null,
+      classeEuro: form.get("classeEuro") || null,
       prossimaRevisione: form.get("prossimaRevisione") || null,
+      assicurazioneScadenza: form.get("assicurazioneScadenza") || null,
+      bolloScadenza: form.get("bolloScadenza") || null,
     };
 
     try {
@@ -215,8 +219,35 @@ export default function VehiclesPage() {
                   <Input id="consumoKmL" name="consumoKmL" type="number" step="0.1" />
                 </div>
                 <div>
+                  <Label htmlFor="pesoComplessivoKg">Peso PTT (kg)</Label>
+                  <Input id="pesoComplessivoKg" name="pesoComplessivoKg" type="number" placeholder="es. 26000" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="classeEuro">Classe Euro</Label>
+                  <select name="classeEuro" id="classeEuro" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+                    <option value="">Non specificata</option>
+                    <option value="Euro 3">Euro 3</option>
+                    <option value="Euro 4">Euro 4</option>
+                    <option value="Euro 5">Euro 5</option>
+                    <option value="Euro 6">Euro 6</option>
+                    <option value="Euro 6E">Euro 6E</option>
+                  </select>
+                </div>
+                <div>
                   <Label htmlFor="prossimaRevisione">Prossima Revisione</Label>
                   <Input id="prossimaRevisione" name="prossimaRevisione" type="date" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="assicurazioneScadenza">Scadenza Assicurazione</Label>
+                  <Input id="assicurazioneScadenza" name="assicurazioneScadenza" type="date" />
+                </div>
+                <div>
+                  <Label htmlFor="bolloScadenza">Scadenza Bollo</Label>
+                  <Input id="bolloScadenza" name="bolloScadenza" type="date" />
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={saving}>
