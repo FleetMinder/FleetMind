@@ -16,8 +16,12 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // Non autenticato → redirect a login
+  // Non autenticato → mostra landing page (non login)
   if (!token) {
+    // Se è già sulla root, mostra la landing page
+    if (pathname === "/") {
+      return NextResponse.rewrite(new URL("/landing", request.url));
+    }
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
