@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -16,8 +17,10 @@ import {
   Menu,
   X,
   LogOut,
+  Sun,
+  Moon,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 const navigation = [
@@ -34,7 +37,11 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   // Dati utente dalla sessione
   const userName = session?.user?.nome && session?.user?.cognome
@@ -117,8 +124,25 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* User info + Logout */}
+          {/* Theme toggle + User info + Logout */}
           <div className="px-4 py-4 border-t border-border space-y-3">
+            {/* Theme toggle */}
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-muted-foreground hover:text-foreground"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4 mr-2" />
+                ) : (
+                  <Moon className="h-4 w-4 mr-2" />
+                )}
+                {theme === "dark" ? "Tema Chiaro" : "Tema Scuro"}
+              </Button>
+            )}
+
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                 <span className="text-xs font-bold text-primary">{initials}</span>

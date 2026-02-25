@@ -4,6 +4,36 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 99%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 32% 91%;
+    --secondary-foreground: 222 47% 20%;
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 214 32% 91%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+    --chart-1: 217 91% 60%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --radius: 0.5rem;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+  }
+
+  .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
     --card: 217 33% 17%;
@@ -50,21 +80,39 @@
   }
 }
 
-/* Leaflet overrides for dark theme */
+/* Leaflet overrides - light */
 .leaflet-container {
-  background: hsl(217 33% 17%) !important;
+  background: hsl(0 0% 95%) !important;
 }
 .leaflet-control-zoom a {
+  background: hsl(0 0% 100%) !important;
+  color: hsl(222 47% 11%) !important;
+  border-color: hsl(214 32% 91%) !important;
+}
+.leaflet-popup-content-wrapper {
+  background: hsl(0 0% 100%) !important;
+  color: hsl(222 47% 11%) !important;
+  border-radius: 0.5rem !important;
+}
+.leaflet-popup-tip {
+  background: hsl(0 0% 100%) !important;
+}
+
+/* Leaflet overrides - dark */
+.dark .leaflet-container {
+  background: hsl(217 33% 17%) !important;
+}
+.dark .leaflet-control-zoom a {
   background: hsl(217 33% 17%) !important;
   color: hsl(210 40% 98%) !important;
   border-color: hsl(217 33% 22%) !important;
 }
-.leaflet-popup-content-wrapper {
+.dark .leaflet-popup-content-wrapper {
   background: hsl(217 33% 17%) !important;
   color: hsl(210 40% 98%) !important;
   border-radius: 0.5rem !important;
 }
-.leaflet-popup-tip {
+.dark .leaflet-popup-tip {
   background: hsl(217 33% 17%) !important;
 }
 
@@ -77,9 +125,15 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(217 33% 30%);
+  background: hsl(214 32% 80%);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
+  background: hsl(214 32% 70%);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: hsl(217 33% 30%);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
   background: hsl(217 33% 40%);
 }
