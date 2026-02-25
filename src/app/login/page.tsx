@@ -73,19 +73,19 @@ export default function LoginPage() {
     <div className="space-y-8">
       {/* Logo */}
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/30">
-          <Truck className="h-8 w-8 text-blue-400" />
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30">
+          <Truck className="h-8 w-8 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">FleetMind</h1>
+          <h1 className="text-3xl font-display font-bold tracking-tight">FleetMind</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            AI Dispatch Planner per la logistica
+            Il cervello della tua flotta
           </p>
         </div>
       </div>
 
       {/* Login Card */}
-      <Card className="border-slate-800/50 bg-slate-900/50 backdrop-blur">
+      <Card className="border-border bg-card/50 backdrop-blur">
         <CardHeader className="pb-4">
           <h2 className="text-lg font-semibold text-center">
             Accedi al tuo account
@@ -114,10 +114,10 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-700" />
+              <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-slate-900 px-2 text-muted-foreground">
+              <span className="bg-card px-2 text-muted-foreground">
                 oppure
               </span>
             </div>

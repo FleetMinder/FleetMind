@@ -78,7 +78,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-zinc-800/60 bg-[#09090b]/90 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-md bg-blue-700 flex items-center justify-center">
               <Truck className="h-3.5 w-3.5 text-white" />
             </div>
             <span className="text-sm font-semibold tracking-tight">FleetMind</span>
@@ -95,7 +95,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white text-xs h-8 px-4">
+              <Button size="sm" className="bg-blue-700 hover:bg-blue-600 text-white text-xs h-8 px-4">
                 Prova Gratis
               </Button>
             </Link>
@@ -114,7 +114,7 @@ export default function LandingPage() {
           </FadeIn>
 
           <FadeIn delay={0.05}>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.05]">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-display font-bold tracking-tight leading-[1.05]">
               Dispatch intelligente
               <br />
               <span className="text-blue-400">per la logistica italiana</span>
@@ -131,7 +131,7 @@ export default function LandingPage() {
           <FadeIn delay={0.15}>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/login">
-                <Button size="lg" className="h-11 px-6 bg-blue-600 hover:bg-blue-500 text-white gap-2">
+                <Button size="lg" className="h-11 px-6 bg-blue-700 hover:bg-blue-600 text-white gap-2">
                   Inizia Gratis
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -205,7 +205,7 @@ export default function LandingPage() {
               <div className="h-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-7 sm:p-9">
                 <div className="flex items-start justify-between mb-5">
                   <div>
-                    <div className="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-blue-700/10 flex items-center justify-center mb-3">
                       <Brain className="h-5 w-5 text-blue-400" />
                     </div>
                     <h3 className="text-xl font-semibold mb-1.5">AI Dispatch</h3>
@@ -236,7 +236,7 @@ export default function LandingPage() {
                 <div className="space-y-3 mt-5">
                   <ProgressBar label="Tempo pianificazione" value={89} color="bg-blue-500" />
                   <ProgressBar label="Errori compliance" value={97} color="bg-emerald-500" />
-                  <ProgressBar label="Costi km ottimizzati" value={12} color="bg-violet-500" />
+                  <ProgressBar label="Costi km ottimizzati" value={12} color="bg-amber-500" />
                 </div>
               </div>
             </FadeIn>
@@ -264,8 +264,8 @@ export default function LandingPage() {
             {/* Difesa Economica */}
             <FadeIn delay={0.11} className="md:col-span-3">
               <div className="h-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-7">
-                <div className="w-10 h-10 rounded-lg bg-violet-600/10 flex items-center justify-center mb-3">
-                  <Euro className="h-5 w-5 text-violet-400" />
+                <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-3">
+                  <Euro className="h-5 w-5 text-amber-400" />
                 </div>
                 <h3 className="text-lg font-semibold mb-1.5">Difesa Economica</h3>
                 <p className="text-sm text-zinc-400 leading-relaxed mb-4">
@@ -273,7 +273,7 @@ export default function LandingPage() {
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {["Costi MIT", "Alert tariffe", "Report PDF", "4 classi peso"].map((f) => (
-                    <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-400 border border-violet-500/10">
+                    <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/10">
                       {f}
                     </span>
                   ))}
@@ -373,7 +373,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8">
               <Link href="/login">
-                <Button size="lg" className="h-11 px-8 bg-blue-600 hover:bg-blue-500 text-white gap-2">
+                <Button size="lg" className="h-11 px-8 bg-blue-700 hover:bg-blue-600 text-white gap-2">
                   Inizia Gratis
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -388,7 +388,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center">
+              <div className="w-5 h-5 rounded bg-blue-700 flex items-center justify-center">
                 <Truck className="h-2.5 w-2.5 text-white" />
               </div>
               <span className="text-xs font-medium text-zinc-400">FleetMind</span>
@@ -459,12 +459,12 @@ function PricingCard({
     <div
       className={`relative rounded-xl p-6 ${
         evidenziato
-          ? "border border-blue-500/30 bg-blue-500/[0.04]"
+          ? "border border-amber-500/30 bg-amber-500/[0.04]"
           : "border border-zinc-800 bg-zinc-900/50"
       }`}
     >
       {evidenziato && (
-        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-blue-600 text-[10px] font-semibold text-white">
+        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-amber-500 text-[10px] font-semibold text-zinc-900">
           Consigliato
         </div>
       )}
@@ -486,7 +486,7 @@ function PricingCard({
         <Button
           className={`w-full h-9 text-xs ${
             evidenziato
-              ? "bg-blue-600 hover:bg-blue-500 text-white"
+              ? "bg-blue-700 hover:bg-blue-600 text-white"
               : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700"
           }`}
         >
@@ -553,7 +553,7 @@ function ROICalculator() {
           </div>
           <div className="rounded-lg bg-zinc-800/50 border border-zinc-800 p-3 text-center">
             <p className="text-[10px] text-zinc-500 mb-0.5">Risparmio compliance</p>
-            <p className="text-lg font-bold text-violet-400">
+            <p className="text-lg font-bold text-amber-400">
               {risparmioMulte.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
             </p>
           </div>

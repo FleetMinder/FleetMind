@@ -88,10 +88,10 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-800/50">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-600/20 border border-blue-500/30">
-            <Truck className="h-5 w-5 text-blue-400" />
+          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/20 border border-primary/30">
+            <Truck className="h-5 w-5 text-primary" />
           </div>
           <div>
             <h1 className="text-lg font-bold">FleetMind</h1>
@@ -112,7 +112,7 @@ export default function OnboardingPage() {
             {skipping ? "Salto..." : "Salta tutto"}
           </Button>
           <div className="flex items-center gap-2">
-            <Brain className="h-4 w-4 text-blue-400" />
+            <Brain className="h-4 w-4 text-primary" />
             <span className="text-sm text-muted-foreground">
               Step {currentStep} di {steps.length}
             </span>
@@ -130,16 +130,16 @@ export default function OnboardingPage() {
             >
               <div
                 className={`h-1.5 w-full rounded-full transition-colors ${
-                  step.id <= currentStep ? "bg-blue-500" : "bg-slate-800"
+                  step.id <= currentStep ? "bg-primary" : "bg-muted"
                 }`}
               />
               <span
                 className={`text-[10px] ${
                   step.id === currentStep
-                    ? "text-blue-400 font-medium"
+                    ? "text-primary font-medium"
                     : step.id < currentStep
                       ? "text-muted-foreground"
-                      : "text-slate-600"
+                      : "text-muted-foreground/50"
                 }`}
               >
                 {step.label}

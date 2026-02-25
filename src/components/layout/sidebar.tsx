@@ -88,7 +88,7 @@ export function Sidebar() {
             <div>
               <h1 className="text-lg font-bold text-foreground">FleetMind</h1>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                AI Dispatch Planner
+                Il cervello della tua flotta
               </p>
             </div>
           </div>
@@ -115,7 +115,7 @@ export function Sidebar() {
                   <item.icon className="h-5 w-5 flex-shrink-0" />
                   {item.name}
                   {item.name === "AI Dispatch" && (
-                    <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-semibold">
+                    <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-amber-400/20 text-amber-400 font-semibold">
                       AI
                     </span>
                   )}
