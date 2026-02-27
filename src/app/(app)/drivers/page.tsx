@@ -33,6 +33,7 @@ import {
   MapPin,
   Shield,
   Users,
+  Pencil,
 } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { format, differenceInDays } from "date-fns";
@@ -87,6 +88,8 @@ export default function DriversPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [editingDriver, setEditingDriver] = useState<Driver | null>(null);
+  const [editSaving, setEditSaving] = useState(false);
 
   const handleStatoChange = async (driverId: string, nuovoStato: string) => {
     setUpdatingId(driverId);
@@ -103,6 +106,54 @@ export default function DriversPage() {
       toast.error("Errore nell'aggiornamento dello stato");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingDriver) return;
+    setEditSaving(true);
+    const form = new FormData(e.currentTarget);
+    const body = {
+      nome: form.get("nome"),
+      cognome: form.get("cognome"),
+      patenteTipo: form.get("patenteTipo"),
+      patenteScadenza: form.get("patenteScadenza"),
+      tachigrafoScadenza: form.get("tachigrafoScadenza"),
+      cartaCQC: form.get("cartaCQC") || null,
+      cqcScadenza: form.get("cqcScadenza") || null,
+      telefono: form.get("telefono") || null,
+    };
+    try {
+      const res = await fetch(`/api/drivers/${editingDriver.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error();
+      setDrivers((prev) =>
+        prev.map((d) =>
+          d.id === editingDriver.id
+            ? {
+                ...d,
+                nome: body.nome as string,
+                cognome: body.cognome as string,
+                patenteTipo: body.patenteTipo as string,
+                patenteScadenza: body.patenteScadenza as string,
+                tachigrafoScadenza: body.tachigrafoScadenza as string,
+                cartaCQC: body.cartaCQC as string | null,
+                cqcScadenza: body.cqcScadenza as string | null,
+                telefono: body.telefono as string | null,
+              }
+            : d
+        )
+      );
+      toast.success("Autista aggiornato");
+      setEditingDriver(null);
+    } catch {
+      toast.error("Errore nell'aggiornamento dell'autista");
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -332,6 +383,14 @@ export default function DriversPage() {
                       </p>
                     </div>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingDriver(driver)}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                      title="Modifica autista"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
@@ -355,6 +414,7 @@ export default function DriversPage() {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -408,6 +468,69 @@ export default function DriversPage() {
         })}
       </div>
       )}
+
+      {/* Edit driver dialog */}
+      <Dialog open={!!editingDriver} onOpenChange={(open) => !open && setEditingDriver(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Modifica Autista</DialogTitle>
+          </DialogHeader>
+          {editingDriver && (
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-nome">Nome</Label>
+                  <Input id="edit-nome" name="nome" required defaultValue={editingDriver.nome} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-cognome">Cognome</Label>
+                  <Input id="edit-cognome" name="cognome" required defaultValue={editingDriver.cognome} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-patenteTipo">Tipo Patente</Label>
+                  <select name="patenteTipo" id="edit-patenteTipo" defaultValue={editingDriver.patenteTipo} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" required>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="CE">CE</option>
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="edit-patenteScadenza">Scadenza Patente</Label>
+                  <Input id="edit-patenteScadenza" name="patenteScadenza" type="date" required
+                    defaultValue={editingDriver.patenteScadenza?.split("T")[0]} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-tachigrafoScadenza">Scadenza Tachigrafo</Label>
+                  <Input id="edit-tachigrafoScadenza" name="tachigrafoScadenza" type="date" required
+                    defaultValue={editingDriver.tachigrafoScadenza?.split("T")[0]} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-telefono">Telefono</Label>
+                  <Input id="edit-telefono" name="telefono" defaultValue={editingDriver.telefono || ""} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-cartaCQC">Carta CQC</Label>
+                  <Input id="edit-cartaCQC" name="cartaCQC" defaultValue={editingDriver.cartaCQC || ""} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-cqcScadenza">Scadenza CQC</Label>
+                  <Input id="edit-cqcScadenza" name="cqcScadenza" type="date"
+                    defaultValue={editingDriver.cqcScadenza?.split("T")[0] || ""} />
+                </div>
+              </div>
+              <Button type="submit" className="w-full" disabled={editSaving}>
+                {editSaving ? "Salvataggio..." : "Salva Modifiche"}
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

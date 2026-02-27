@@ -45,6 +45,7 @@ import {
   Gauge,
   Calendar,
   Fuel,
+  Pencil,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -102,7 +103,9 @@ export default function VehiclesPage() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailVehicle, setDetailVehicle] = useState<Vehicle | null>(null);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [saving, setSaving] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const handleStatoChange = async (vehicleId: string, nuovoStato: string) => {
@@ -120,6 +123,41 @@ export default function VehiclesPage() {
       toast.error("Errore nell'aggiornamento dello stato");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingVehicle) return;
+    setEditSaving(true);
+    const form = new FormData(e.currentTarget);
+    const body = {
+      marca: form.get("marca") as string,
+      modello: form.get("modello") as string,
+      tipo: form.get("tipo") as string,
+      capacitaPesoKg: parseFloat(form.get("capacitaPesoKg") as string),
+      capacitaVolumeM3: parseFloat(form.get("capacitaVolumeM3") as string),
+      consumoKmL: form.get("consumoKmL") ? parseFloat(form.get("consumoKmL") as string) : null,
+      prossimaRevisione: (form.get("prossimaRevisione") as string) || null,
+    };
+    try {
+      const res = await fetch(`/api/vehicles/${editingVehicle.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error();
+      setVehicles((prev) =>
+        prev.map((v) =>
+          v.id === editingVehicle.id ? { ...v, ...body } : v
+        )
+      );
+      toast.success("Mezzo aggiornato");
+      setEditingVehicle(null);
+    } catch {
+      toast.error("Errore nell'aggiornamento del mezzo");
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -316,29 +354,38 @@ export default function VehiclesPage() {
                       </p>
                     </div>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        disabled={updatingId === v.id}
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-opacity hover:opacity-75 disabled:opacity-50 cursor-pointer ${badge.className}`}
-                      >
-                        {badge.label}
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-44">
-                      <DropdownMenuLabel className="text-xs">Cambia stato</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      {Object.entries(statoBadge).map(([key, val]) => (
-                        <DropdownMenuItem
-                          key={key}
-                          onClick={() => handleStatoChange(v.id, key)}
-                          className="text-sm cursor-pointer"
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingVehicle(v)}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                      title="Modifica mezzo"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          disabled={updatingId === v.id}
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-opacity hover:opacity-75 disabled:opacity-50 cursor-pointer ${badge.className}`}
                         >
-                          {val.label}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                          {badge.label}
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuLabel className="text-xs">Cambia stato</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {Object.entries(statoBadge).map(([key, val]) => (
+                          <DropdownMenuItem
+                            key={key}
+                            onClick={() => handleStatoChange(v.id, key)}
+                            className="text-sm cursor-pointer"
+                          >
+                            {val.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -436,6 +483,63 @@ export default function VehiclesPage() {
                 </TableBody>
               </Table>
             </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit vehicle dialog */}
+      <Dialog open={!!editingVehicle} onOpenChange={(open) => !open && setEditingVehicle(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Modifica Mezzo — {editingVehicle?.targa}</DialogTitle>
+          </DialogHeader>
+          {editingVehicle && (
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-marca">Marca</Label>
+                  <Input id="edit-marca" name="marca" required defaultValue={editingVehicle.marca} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-modello">Modello</Label>
+                  <Input id="edit-modello" name="modello" required defaultValue={editingVehicle.modello} />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-tipo">Tipo</Label>
+                <select name="tipo" id="edit-tipo" defaultValue={editingVehicle.tipo} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" required>
+                  <option value="furgone">Furgone</option>
+                  <option value="camion">Camion</option>
+                  <option value="furgone_frigo">Furgone Frigo</option>
+                  <option value="cisterna">Cisterna</option>
+                  <option value="pianale">Pianale</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-capacitaPesoKg">Peso max (kg)</Label>
+                  <Input id="edit-capacitaPesoKg" name="capacitaPesoKg" type="number" required defaultValue={editingVehicle.capacitaPesoKg} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-capacitaVolumeM3">Volume max (m³)</Label>
+                  <Input id="edit-capacitaVolumeM3" name="capacitaVolumeM3" type="number" required defaultValue={editingVehicle.capacitaVolumeM3} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-consumoKmL">Consumo (km/L)</Label>
+                  <Input id="edit-consumoKmL" name="consumoKmL" type="number" step="0.1" defaultValue={editingVehicle.consumoKmL ?? ""} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-prossimaRevisione">Prossima Revisione</Label>
+                  <Input id="edit-prossimaRevisione" name="prossimaRevisione" type="date"
+                    defaultValue={editingVehicle.prossimaRevisione?.split("T")[0] || ""} />
+                </div>
+              </div>
+              <Button type="submit" className="w-full" disabled={editSaving}>
+                {editSaving ? "Salvataggio..." : "Salva Modifiche"}
+              </Button>
+            </form>
           )}
         </DialogContent>
       </Dialog>

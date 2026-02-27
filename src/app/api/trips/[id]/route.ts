@@ -13,6 +13,7 @@ export async function PATCH(
 
     const trip = await prisma.trip.findFirst({
       where: { id: params.id, companyId },
+      include: { orders: { select: { id: true } } },
     });
 
     if (!trip) {
@@ -24,12 +25,35 @@ export async function PATCH(
       data: { stato },
     });
 
-    // Log activity
+    // When trip ends, free driver and vehicle
+    if (stato === "completato" || stato === "annullato") {
+      await Promise.all([
+        prisma.driver.update({
+          where: { id: trip.driverId },
+          data: { stato: "disponibile" },
+        }),
+        prisma.vehicle.update({
+          where: { id: trip.vehicleId },
+          data: { stato: "disponibile" },
+        }),
+        // If cancelled, reset orders back to pending
+        stato === "annullato"
+          ? prisma.order.updateMany({
+              where: { id: { in: trip.orders.map((o) => o.id) } },
+              data: { stato: "pending", tripId: null },
+            })
+          : prisma.order.updateMany({
+              where: { id: { in: trip.orders.map((o) => o.id) } },
+              data: { stato: "completato" },
+            }),
+      ]);
+    }
+
     await prisma.activityLog.create({
       data: {
         companyId,
-        tipo: "trip_status",
-        messaggio: `Viaggio aggiornato a: ${stato}`,
+        tipo: stato === "completato" ? "trip_completed" : "trip_status",
+        messaggio: `Viaggio ${stato === "completato" ? "completato" : "aggiornato a " + stato}`,
       },
     });
 

@@ -6,18 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/layout/page-header";
 import { toast } from "sonner";
 import {
   Building2,
-  Key,
   CreditCard,
   Save,
   Loader2,
   CheckCircle2,
-  Brain,
   Fuel,
+  RotateCcw,
 } from "lucide-react";
 
 interface Company {
@@ -79,9 +77,8 @@ export default function SettingsPage() {
 
   // Form state
   const [companyForm, setCompanyForm] = useState<Partial<Company>>({});
-  const [apiKey, setApiKey] = useState("");
-  const [googleMapsKey, setGoogleMapsKey] = useState("");
   const [costoCarburante, setCostoCarburante] = useState("1.85");
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -89,8 +86,6 @@ export default function SettingsPage() {
       .then((data: SettingsData) => {
         setData(data);
         setCompanyForm(data.company);
-        setApiKey(data.settings.anthropic_api_key || "");
-        setGoogleMapsKey(data.settings.google_maps_api_key || "");
         setCostoCarburante(data.settings.costo_carburante_litro || "1.85");
       })
       .catch(() => toast.error("Errore nel caricamento delle impostazioni"))
@@ -113,8 +108,6 @@ export default function SettingsPage() {
             email: companyForm.email,
           },
           settings: {
-            anthropic_api_key: apiKey,
-            google_maps_api_key: googleMapsKey,
             costo_carburante_litro: costoCarburante,
           },
         }),
@@ -243,58 +236,18 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* API Keys */}
+        {/* Preferenze */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Key className="h-5 w-5" />
-              Integrazioni API
+              <Fuel className="h-5 w-5" />
+              Preferenze Operative
             </CardTitle>
-            <CardDescription>
-              Configura le chiavi API per i servizi esterni
-            </CardDescription>
+            <CardDescription>Parametri per i calcoli di costo</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent>
             <div>
-              <Label htmlFor="anthropicKey" className="flex items-center gap-2">
-                <Brain className="h-4 w-4 text-primary" />
-                Anthropic API Key (Claude)
-              </Label>
-              <Input
-                id="anthropicKey"
-                type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-ant-..."
-                className="mt-1"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Necessaria per il motore AI Dispatch. Ottieni una chiave su console.anthropic.com
-              </p>
-            </div>
-            <Separator />
-            <div>
-              <Label htmlFor="googleMapsKey" className="flex items-center gap-2">
-                Google Maps API Key
-              </Label>
-              <Input
-                id="googleMapsKey"
-                type="password"
-                value={googleMapsKey}
-                onChange={(e) => setGoogleMapsKey(e.target.value)}
-                placeholder="AIza..."
-                className="mt-1"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Per routing reale, distanze e pedaggi. Ottieni una chiave su console.cloud.google.com
-              </p>
-            </div>
-            <Separator />
-            <div>
-              <Label htmlFor="costoCarburante" className="flex items-center gap-2">
-                <Fuel className="h-4 w-4" />
-                Costo Carburante (EUR/litro)
-              </Label>
+              <Label htmlFor="costoCarburante">Costo Carburante (EUR/litro)</Label>
               <Input
                 id="costoCarburante"
                 type="number"
@@ -303,7 +256,49 @@ export default function SettingsPage() {
                 onChange={(e) => setCostoCarburante(e.target.value)}
                 className="mt-1 max-w-[200px]"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Usato per la stima dei costi carburante nelle tratte
+              </p>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Demo reset */}
+        <Card className="border-amber-500/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-400">
+              <RotateCcw className="h-5 w-5" />
+              Reset Demo
+            </CardTitle>
+            <CardDescription>
+              Ripristina lo stato iniziale dell&apos;account demo: elimina tutti i viaggi, riporta ordini a pending e autisti/mezzi a disponibili.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+              disabled={resetting}
+              onClick={async () => {
+                setResetting(true);
+                try {
+                  const res = await fetch("/api/demo-reset", { method: "POST" });
+                  if (!res.ok) throw new Error();
+                  toast.success("Demo ripristinato! Ora puoi ricominciare dall'inizio.");
+                } catch {
+                  toast.error("Errore nel reset demo");
+                } finally {
+                  setResetting(false);
+                }
+              }}
+            >
+              {resetting ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RotateCcw className="h-4 w-4 mr-2" />
+              )}
+              {resetting ? "Ripristino in corso..." : "Ripristina Demo"}
+            </Button>
           </CardContent>
         </Card>
 
