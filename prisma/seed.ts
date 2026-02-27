@@ -23,11 +23,30 @@ async function main() {
 
   console.log(`  Azienda: ${company.nome} (${company.id})`);
 
-  // ─── Link user to company (if exists) ───
-  await prisma.user.updateMany({
-    where: { companyId: null },
-    data: { companyId: company.id },
-  });
+  // ─── Utente demo ───
+  const demoEmail = "andrea.brognera@gmail.com";
+  const existingDemoUser = await prisma.user.findUnique({ where: { email: demoEmail } });
+  if (!existingDemoUser) {
+    await prisma.user.create({
+      data: {
+        email: demoEmail,
+        emailVerified: new Date(),
+        nome: "Demo",
+        cognome: "FleetMind",
+        companyId: company.id,
+        ruolo: "admin",
+      },
+    });
+    console.log(`  Utente demo creato: ${demoEmail}`);
+  } else if (!existingDemoUser.companyId) {
+    await prisma.user.update({
+      where: { email: demoEmail },
+      data: { companyId: company.id, emailVerified: new Date() },
+    });
+    console.log(`  Utente demo collegato all'azienda: ${demoEmail}`);
+  } else {
+    console.log(`  Utente demo già esistente: ${demoEmail}`);
+  }
 
   // ─── Settings ───
   const settings = [
