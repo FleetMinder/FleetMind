@@ -161,7 +161,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{kpi.ordiniPending}</div>
             <p className="text-xs text-muted-foreground">
-              {kpi.ordiniOggi} creati oggi
+              {kpi.ordiniOggi} negli ultimi 7gg
             </p>
           </CardContent>
         </Card>

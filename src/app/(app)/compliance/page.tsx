@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/page-header";
 import { CardGridSkeleton } from "@/components/shared/loading-skeleton";
 import { toast } from "sonner";
+import Link from "next/link";
 import {
   ShieldCheck,
   AlertTriangle,
@@ -25,6 +26,7 @@ import {
   TrendingUp,
   RefreshCw,
   ChevronRight,
+  ArrowRight,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -517,6 +519,7 @@ export default function CompliancePage() {
 function AlertCard({ alert }: { alert: ComplianceAlert }) {
   const config = severityConfig[alert.severity];
   const Icon = config.icon;
+  const href = alert.entitaTipo === "driver" ? "/drivers" : "/vehicles";
 
   return (
     <div className={`flex items-start gap-3 p-3 rounded-lg border ${config.className}`}>
@@ -538,6 +541,12 @@ function AlertCard({ alert }: { alert: ComplianceAlert }) {
           </p>
         )}
       </div>
+      <Link href={href}>
+        <Button variant="ghost" size="sm" className="flex-shrink-0 h-7 px-2 text-xs gap-1">
+          Vai
+          <ArrowRight className="h-3 w-3" />
+        </Button>
+      </Link>
     </div>
   );
 }

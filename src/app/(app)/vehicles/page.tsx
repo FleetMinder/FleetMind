@@ -4,6 +4,14 @@ import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -95,6 +103,25 @@ export default function VehiclesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailVehicle, setDetailVehicle] = useState<Vehicle | null>(null);
   const [saving, setSaving] = useState(false);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const handleStatoChange = async (vehicleId: string, nuovoStato: string) => {
+    setUpdatingId(vehicleId);
+    try {
+      const res = await fetch(`/api/vehicles/${vehicleId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stato: nuovoStato }),
+      });
+      if (!res.ok) throw new Error();
+      setVehicles((prev) => prev.map((v) => v.id === vehicleId ? { ...v, stato: nuovoStato } : v));
+      toast.success("Stato aggiornato");
+    } catch {
+      toast.error("Errore nell'aggiornamento dello stato");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const fetchVehicles = useCallback(async () => {
     try {
@@ -289,9 +316,29 @@ export default function VehiclesPage() {
                       </p>
                     </div>
                   </div>
-                  <Badge variant="outline" className={badge.className}>
-                    {badge.label}
-                  </Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        disabled={updatingId === v.id}
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-opacity hover:opacity-75 disabled:opacity-50 cursor-pointer ${badge.className}`}
+                      >
+                        {badge.label}
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      <DropdownMenuLabel className="text-xs">Cambia stato</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {Object.entries(statoBadge).map(([key, val]) => (
+                        <DropdownMenuItem
+                          key={key}
+                          onClick={() => handleStatoChange(v.id, key)}
+                          className="text-sm cursor-pointer"
+                        >
+                          {val.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">

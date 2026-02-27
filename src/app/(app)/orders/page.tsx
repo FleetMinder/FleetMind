@@ -41,6 +41,7 @@ import {
   RefreshCw,
   Snowflake,
   AlertTriangle,
+  User,
 } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { toast } from "sonner";
@@ -78,7 +79,7 @@ interface Order {
   note: string | null;
   stato: OrderStatus;
   createdAt: string;
-  trip?: { id: string; stato: string } | null;
+  trip?: { id: string; stato: string; driver: { nome: string; cognome: string } | null } | null;
 }
 
 interface NewOrderForm {
@@ -621,6 +622,7 @@ export default function OrdersPage() {
                   <TableHead className="text-right">Peso</TableHead>
                   <TableHead>Urgenza</TableHead>
                   <TableHead>Stato</TableHead>
+                  <TableHead>Autista</TableHead>
                   <TableHead className="text-right">Azioni</TableHead>
                 </TableRow>
               </TableHeader>
@@ -654,6 +656,16 @@ export default function OrdersPage() {
                     </TableCell>
                     <TableCell>{urgenzaBadge(order.urgenza)}</TableCell>
                     <TableCell>{statoBadge(order.stato)}</TableCell>
+                    <TableCell>
+                      {order.trip?.driver ? (
+                        <span className="flex items-center gap-1.5 text-sm">
+                          <User className="h-3.5 w-3.5 text-muted-foreground" />
+                          {order.trip.driver.nome} {order.trip.driver.cognome}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"

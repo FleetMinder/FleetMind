@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
       orderBy: [{ urgenza: "asc" }, { createdAt: "desc" }],
       include: {
         trip: {
-          select: { id: true, stato: true },
+          select: {
+            id: true,
+            stato: true,
+            driver: { select: { nome: true, cognome: true } },
+          },
         },
       },
     });

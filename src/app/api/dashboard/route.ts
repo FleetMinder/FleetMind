@@ -5,10 +5,8 @@ import { getCompanyId } from "@/lib/company";
 export async function GET() {
   try {
     const companyId = await getCompanyId();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const [
       ordiniOggi,
@@ -25,7 +23,7 @@ export async function GET() {
       prisma.order.count({
         where: {
           companyId,
-          createdAt: { gte: today, lt: tomorrow },
+          createdAt: { gte: sevenDaysAgo },
         },
       }),
       prisma.driver.count({

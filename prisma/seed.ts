@@ -83,7 +83,7 @@ async function main() {
       oreGuidaSettimana: 28,
       oreGuidaGiorno: 6,
       oreRiposoRimanenti: 11,
-      stato: "disponibile" as const,
+      stato: "in_viaggio" as const,
       telefono: "+39 333 1842590",
       latitudine: 45.695,
       longitudine: 9.67,
