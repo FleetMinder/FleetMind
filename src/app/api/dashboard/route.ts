@@ -74,21 +74,45 @@ export async function GET() {
       }),
     ]);
 
-    const kmPianificati = await prisma.trip.aggregate({
-      where: {
-        companyId,
-        stato: { in: ["pianificato", "approvato", "in_corso"] },
-      },
-      _sum: { kmTotali: true },
-    });
+    const [kmPianificati, costoCarburante, ordiniByStato, tripsByStato] =
+      await Promise.all([
+        prisma.trip.aggregate({
+          where: {
+            companyId,
+            stato: { in: ["pianificato", "approvato", "in_corso"] },
+          },
+          _sum: { kmTotali: true },
+        }),
+        prisma.trip.aggregate({
+          where: {
+            companyId,
+            stato: { in: ["pianificato", "approvato", "in_corso"] },
+          },
+          _sum: { costoCarburanteStimato: true },
+        }),
+        prisma.order.groupBy({
+          by: ["stato"],
+          where: { companyId },
+          _count: { stato: true },
+        }),
+        prisma.trip.groupBy({
+          by: ["stato"],
+          where: { companyId },
+          _count: { stato: true },
+          _sum: { kmTotali: true },
+        }),
+      ]);
 
-    const costoCarburante = await prisma.trip.aggregate({
-      where: {
-        companyId,
-        stato: { in: ["pianificato", "approvato", "in_corso"] },
-      },
-      _sum: { costoCarburanteStimato: true },
-    });
+    const ordiniChartData = ordiniByStato.map((r) => ({
+      stato: r.stato,
+      count: r._count.stato,
+    }));
+
+    const trippiChartData = tripsByStato.map((r) => ({
+      stato: r.stato,
+      count: r._count.stato,
+      km: Math.round((r._sum.kmTotali || 0) * 10) / 10,
+    }));
 
     return NextResponse.json({
       kpi: {
@@ -105,6 +129,10 @@ export async function GET() {
       recentLogs,
       drivers,
       trips,
+      charts: {
+        ordini: ordiniChartData,
+        trips: trippiChartData,
+      },
     });
   } catch (error) {
     console.error("Dashboard API error:", error);

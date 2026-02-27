@@ -19,6 +19,7 @@ import {
   LogOut,
   Sun,
   Moon,
+  Route,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Ordini", href: "/orders", icon: Package },
   { name: "AI Dispatch", href: "/dispatch", icon: Brain },
+  { name: "Viaggi", href: "/trips", icon: Route },
   { name: "Compliance", href: "/compliance", icon: ShieldCheck },
   { name: "Autisti", href: "/drivers", icon: Users },
   { name: "Mezzi", href: "/vehicles", icon: Truck },
