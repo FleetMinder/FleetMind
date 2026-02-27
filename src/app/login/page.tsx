@@ -48,6 +48,7 @@ export default function LoginPage() {
       const result = await signIn("email", {
         email: email.trim(),
         redirect: false,
+        callbackUrl: "/",
       });
 
       if (result?.error) {
