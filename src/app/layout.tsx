@@ -22,9 +22,25 @@ const satoshi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "FleetMind - Il cervello della tua flotta",
+  title: "FleetMind - AI Dispatch Planner per la logistica italiana",
   description:
-    "Pianificazione intelligente dei trasporti su gomma con AI. Ottimizza rotte, assegna autisti e gestisci la tua flotta.",
+    "Pianifica viaggi, gestisci compliance e proteggi i tuoi margini. La piattaforma AI per il trasporto su gomma.",
+  metadataBase: new URL("https://www.fleetmind.co"),
+  openGraph: {
+    title: "FleetMind - AI Dispatch Planner",
+    description:
+      "Pianifica viaggi, gestisci compliance e proteggi i tuoi margini. La piattaforma AI per il trasporto su gomma.",
+    url: "https://www.fleetmind.co",
+    siteName: "FleetMind",
+    locale: "it_IT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FleetMind - AI Dispatch Planner",
+    description:
+      "Pianifica viaggi, gestisci compliance e proteggi i tuoi margini.",
+  },
 };
 
 export default function RootLayout({
