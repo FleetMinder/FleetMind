@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Brain,
   ShieldCheck,
@@ -73,9 +74,9 @@ function FadeIn({
 /* ═══════════════════════════════════════════ */
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#09090b] text-zinc-100 overflow-x-hidden">
+    <div className="min-h-screen bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 overflow-x-hidden">
       {/* ─── NAV ─── */}
-      <nav className="fixed top-0 w-full z-50 border-b border-zinc-800/60 bg-[#09090b]/90 backdrop-blur-md">
+      <nav className="fixed top-0 w-full z-50 border-b border-zinc-200/60 dark:border-zinc-800/60 bg-white/90 dark:bg-[#09090b]/90 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-blue-700 flex items-center justify-center">
@@ -83,14 +84,15 @@ export default function LandingPage() {
             </div>
             <span className="text-sm font-semibold tracking-tight">FleetMind</span>
           </div>
-          <div className="hidden sm:flex items-center gap-6 text-[13px] text-zinc-500">
-            <a href="#features" className="hover:text-zinc-200 transition-colors">Funzioni</a>
-            <a href="#roi" className="hover:text-zinc-200 transition-colors">ROI</a>
-            <a href="#pricing" className="hover:text-zinc-200 transition-colors">Prezzi</a>
+          <div className="hidden sm:flex items-center gap-6 text-[13px] text-zinc-500 dark:text-zinc-500">
+            <a href="#features" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Funzioni</a>
+            <a href="#roi" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">ROI</a>
+            <a href="#pricing" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Prezzi</a>
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle className="text-zinc-500 dark:text-zinc-400" />
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white text-xs h-8">
+              <Button variant="ghost" size="sm" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-xs h-8">
                 Accedi
               </Button>
             </Link>
@@ -107,7 +109,7 @@ export default function LandingPage() {
       <section className="pt-28 pb-20 sm:pt-36 sm:pb-28">
         <div className="max-w-6xl mx-auto px-5 text-center">
           <FadeIn>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400 text-xs mb-8">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 text-xs mb-8">
               <Sparkles className="h-3 w-3 text-blue-400" />
               AI-powered logistics for Italy
             </div>
@@ -122,7 +124,7 @@ export default function LandingPage() {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <p className="mt-5 text-base sm:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
+            <p className="mt-5 text-base sm:text-lg text-zinc-500 dark:text-zinc-400 max-w-xl mx-auto leading-relaxed">
               Pianifica viaggi, gestisci compliance e proteggi i tuoi margini.
               Una piattaforma AI per il trasporto su gomma.
             </p>
@@ -137,7 +139,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
               <a href="#features">
-                <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-800 bg-transparent hover:bg-zinc-900 text-zinc-300">
+                <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-300 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300">
                   Scopri le funzioni
                 </Button>
               </a>
@@ -145,7 +147,7 @@ export default function LandingPage() {
           </FadeIn>
 
           <FadeIn delay={0.2}>
-            <p className="mt-4 text-xs text-zinc-600">
+            <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-600">
               Nessuna carta di credito &middot; Setup in 2 minuti &middot; 14 giorni gratis
             </p>
           </FadeIn>
@@ -154,9 +156,9 @@ export default function LandingPage() {
           <FadeIn delay={0.25}>
             <div className="mt-14 flex flex-wrap items-center justify-center gap-10 sm:gap-16">
               <StatItem end={89} suffix="%" label="Tempo risparmiato" />
-              <div className="hidden sm:block w-px h-8 bg-zinc-800" />
+              <div className="hidden sm:block w-px h-8 bg-zinc-200 dark:bg-zinc-800" />
               <StatItem end={15} suffix="min" label="Setup iniziale" />
-              <div className="hidden sm:block w-px h-8 bg-zinc-800" />
+              <div className="hidden sm:block w-px h-8 bg-zinc-200 dark:bg-zinc-800" />
               <StatItem end={100} suffix="%" label="Compliance normativa" />
             </div>
           </FadeIn>
@@ -164,9 +166,9 @@ export default function LandingPage() {
       </section>
 
       {/* ─── TRUST BAR ─── */}
-      <section className="py-8 border-y border-zinc-800/60">
+      <section className="py-8 border-y border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-5">
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-zinc-600">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-zinc-400 dark:text-zinc-600">
             {[
               { icon: Shield, label: "Reg. CE 561/2006" },
               { icon: FileText, label: "e-CMR" },
@@ -202,21 +204,21 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
             {/* AI Dispatch — large */}
             <FadeIn className="md:col-span-4">
-              <div className="h-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-7 sm:p-9">
+              <div className="h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-7 sm:p-9">
                 <div className="flex items-start justify-between mb-5">
                   <div>
                     <div className="w-10 h-10 rounded-lg bg-blue-700/10 flex items-center justify-center mb-3">
                       <Brain className="h-5 w-5 text-blue-400" />
                     </div>
                     <h3 className="text-xl font-semibold mb-1.5">AI Dispatch</h3>
-                    <p className="text-sm text-zinc-400 max-w-sm leading-relaxed">
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm leading-relaxed">
                       Pianifica viaggi ottimali in secondi. L&apos;AI considera mezzi, autisti, ore guida, ADR, zone LEZ e finestre orarie.
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-6">
                   {["Multi-ordine", "Google Maps", "Costi carburante", "Reg. CE 561", "Zone LEZ", "ADR check"].map((f) => (
-                    <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-300 bg-zinc-800/50 rounded-md px-2.5 py-1.5">
+                    <div key={f} className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800/50 rounded-md px-2.5 py-1.5">
                       <CheckCircle2 className="h-3 w-3 text-blue-400 flex-shrink-0" />
                       {f}
                     </div>
@@ -227,11 +229,11 @@ export default function LandingPage() {
 
             {/* Stats card */}
             <FadeIn delay={0.05} className="md:col-span-2">
-              <div className="h-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-7 flex flex-col justify-between">
+              <div className="h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-7 flex flex-col justify-between">
                 <div>
-                  <Gauge className="h-5 w-5 text-zinc-500 mb-3" />
+                  <Gauge className="h-5 w-5 text-zinc-400 dark:text-zinc-500 mb-3" />
                   <h4 className="text-sm font-semibold mb-0.5">Risultati reali</h4>
-                  <p className="text-xs text-zinc-600">Impatto medio</p>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-600">Impatto medio</p>
                 </div>
                 <div className="space-y-3 mt-5">
                   <ProgressBar label="Tempo pianificazione" value={89} color="bg-blue-500" />
@@ -243,17 +245,17 @@ export default function LandingPage() {
 
             {/* Compliance */}
             <FadeIn delay={0.08} className="md:col-span-3">
-              <div className="h-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-7">
+              <div className="h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-7">
                 <div className="w-10 h-10 rounded-lg bg-emerald-600/10 flex items-center justify-center mb-3">
                   <ShieldCheck className="h-5 w-5 text-emerald-400" />
                 </div>
                 <h3 className="text-lg font-semibold mb-1.5">Compliance Automatica</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed mb-4">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">
                   Alert intelligenti prima che sia troppo tardi. Patenti, CQC, tachigrafo, ADR, revisioni, ore guida.
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {["Patente/CQC", "Tachigrafo", "ADR", "Revisioni", "Ore guida", "Assicurazione"].map((f) => (
-                    <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/10">
+                    <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                       {f}
                     </span>
                   ))}
@@ -263,17 +265,17 @@ export default function LandingPage() {
 
             {/* Difesa Economica */}
             <FadeIn delay={0.11} className="md:col-span-3">
-              <div className="h-full rounded-xl border border-zinc-800 bg-zinc-900/50 p-7">
+              <div className="h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-7">
                 <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-3">
-                  <Euro className="h-5 w-5 text-amber-400" />
+                  <Euro className="h-5 w-5 text-amber-500 dark:text-amber-400" />
                 </div>
                 <h3 className="text-lg font-semibold mb-1.5">Difesa Economica</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed mb-4">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">
                   Calcola costi minimi MIT per ogni tratta. Sai subito se una tariffa GDO è sotto-costo.
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {["Costi MIT", "Alert tariffe", "Report PDF", "4 classi peso"].map((f) => (
-                    <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/10">
+                    <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                       {f}
                     </span>
                   ))}
@@ -285,11 +287,11 @@ export default function LandingPage() {
       </section>
 
       {/* ─── HOW IT WORKS ─── */}
-      <section className="py-20 sm:py-28 border-t border-zinc-800/60">
+      <section className="py-20 sm:py-28 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-14">
-              <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-3">Come funziona</p>
+              <p className="text-xs font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-3">Come funziona</p>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
                 Operativo in 3 step
               </h2>
@@ -304,10 +306,10 @@ export default function LandingPage() {
             ].map((item, i) => (
               <FadeIn key={i} delay={i * 0.08}>
                 <div className="text-center">
-                  <div className="w-8 h-8 rounded-full border border-zinc-700 bg-zinc-900 flex items-center justify-center mx-auto mb-4 text-xs font-semibold text-zinc-400">
+                  <div className="w-8 h-8 rounded-full border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mx-auto mb-4 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                     {item.step}
                   </div>
-                  <item.icon className="h-5 w-5 text-zinc-500 mx-auto mb-3" />
+                  <item.icon className="h-5 w-5 text-zinc-400 dark:text-zinc-500 mx-auto mb-3" />
                   <h3 className="text-sm font-semibold mb-1">{item.title}</h3>
                   <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
                 </div>
@@ -318,11 +320,11 @@ export default function LandingPage() {
       </section>
 
       {/* ─── ROI CALCULATOR ─── */}
-      <section id="roi" className="py-20 sm:py-28 border-t border-zinc-800/60">
+      <section id="roi" className="py-20 sm:py-28 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-14">
-              <p className="text-xs font-medium text-emerald-400 uppercase tracking-widest mb-3">ROI Calculator</p>
+              <p className="text-xs font-medium text-emerald-500 dark:text-emerald-400 uppercase tracking-widest mb-3">ROI Calculator</p>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
                 Calcola il tuo risparmio
               </h2>
@@ -335,7 +337,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── PRICING ─── */}
-      <section id="pricing" className="py-20 sm:py-28 border-t border-zinc-800/60">
+      <section id="pricing" className="py-20 sm:py-28 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-5">
           <FadeIn>
             <div className="text-center mb-14">
@@ -362,7 +364,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="py-20 sm:py-28 border-t border-zinc-800/60">
+      <section className="py-20 sm:py-28 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-2xl mx-auto px-5 text-center">
           <FadeIn>
             <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
@@ -384,19 +386,19 @@ export default function LandingPage() {
       </section>
 
       {/* ─── FOOTER ─── */}
-      <footer className="py-8 border-t border-zinc-800/60">
+      <footer className="py-8 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded bg-blue-700 flex items-center justify-center">
                 <Truck className="h-2.5 w-2.5 text-white" />
               </div>
-              <span className="text-xs font-medium text-zinc-400">FleetMind</span>
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">FleetMind</span>
             </div>
-            <div className="flex items-center gap-5 text-[11px] text-zinc-600">
+            <div className="flex items-center gap-5 text-[11px] text-zinc-400 dark:text-zinc-600">
               <span>&copy; 2026 FleetMind</span>
-              <a href="#" className="hover:text-zinc-400 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-zinc-400 transition-colors">Termini</a>
+              <a href="#" className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors">Privacy</a>
+              <a href="#" className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors">Termini</a>
             </div>
           </div>
         </div>
@@ -417,7 +419,7 @@ function StatItem({ end, suffix, label }: { end: number; suffix: string; label: 
         <span ref={ref}>{count}</span>
         <span className="text-blue-400">{suffix}</span>
       </div>
-      <p className="text-[11px] text-zinc-600 mt-0.5">{label}</p>
+      <p className="text-[11px] text-zinc-400 dark:text-zinc-600 mt-0.5">{label}</p>
     </div>
   );
 }
@@ -427,9 +429,9 @@ function ProgressBar({ label, value, color }: { label: string; value: number; co
     <div>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-zinc-500">{label}</span>
-        <span className="text-zinc-300 font-medium">-{value}%</span>
+        <span className="text-zinc-700 dark:text-zinc-300 font-medium">-{value}%</span>
       </div>
-      <div className="h-1 rounded-full bg-zinc-800">
+      <div className="h-1 rounded-full bg-zinc-200 dark:bg-zinc-800">
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: 0 }}
@@ -459,8 +461,8 @@ function PricingCard({
     <div
       className={`relative rounded-xl p-6 ${
         evidenziato
-          ? "border border-amber-500/30 bg-amber-500/[0.04]"
-          : "border border-zinc-800 bg-zinc-900/50"
+          ? "border border-amber-400/40 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/[0.04]"
+          : "border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50"
       }`}
     >
       {evidenziato && (
@@ -469,14 +471,14 @@ function PricingCard({
         </div>
       )}
       <h3 className="text-sm font-semibold">{nome}</h3>
-      <p className="text-[11px] text-zinc-600 mt-0.5">{desc}</p>
+      <p className="text-[11px] text-zinc-400 dark:text-zinc-600 mt-0.5">{desc}</p>
       <div className="mt-4 mb-5">
         <span className="text-3xl font-bold">&euro;{prezzo}</span>
-        <span className="text-zinc-600 text-xs ml-1">/mese</span>
+        <span className="text-zinc-400 dark:text-zinc-600 text-xs ml-1">/mese</span>
       </div>
       <ul className="space-y-2 mb-6">
         {features.map((f, i) => (
-          <li key={i} className="flex items-center gap-2 text-xs text-zinc-400">
+          <li key={i} className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
             <CheckCircle2 className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
             {f}
           </li>
@@ -487,7 +489,7 @@ function PricingCard({
           className={`w-full h-9 text-xs ${
             evidenziato
               ? "bg-blue-700 hover:bg-blue-600 text-white"
-              : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700"
+              : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700"
           }`}
         >
           Inizia Gratis
@@ -517,7 +519,7 @@ function ROICalculator() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-5 sm:p-8">
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-5 sm:p-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 mb-8">
           {[
             { id: "mezzi", label: "Numero mezzi", value: mezzi, set: setMezzi },
@@ -532,41 +534,41 @@ function ROICalculator() {
                 type="number"
                 value={field.value}
                 onChange={(e) => field.set(e.target.value)}
-                className="mt-1 bg-zinc-800/50 border-zinc-700 text-white h-9 text-sm"
+                className="mt-1 h-9 text-sm"
               />
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="rounded-lg bg-zinc-800/50 border border-zinc-800 p-3 text-center">
+          <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 p-3 text-center">
             <p className="text-[10px] text-zinc-500 mb-0.5">Risparmio tempo</p>
-            <p className="text-lg font-bold text-emerald-400">
+            <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
               {risparmioPianificazione.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div className="rounded-lg bg-zinc-800/50 border border-zinc-800 p-3 text-center">
+          <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 p-3 text-center">
             <p className="text-[10px] text-zinc-500 mb-0.5">Risparmio carburante</p>
-            <p className="text-lg font-bold text-blue-400">
+            <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
               {risparmioKm.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
             </p>
           </div>
-          <div className="rounded-lg bg-zinc-800/50 border border-zinc-800 p-3 text-center">
+          <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 p-3 text-center">
             <p className="text-[10px] text-zinc-500 mb-0.5">Risparmio compliance</p>
-            <p className="text-lg font-bold text-amber-400">
+            <p className="text-lg font-bold text-amber-600 dark:text-amber-400">
               {risparmioMulte.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
             </p>
           </div>
         </div>
 
-        <div className="rounded-lg bg-zinc-800/30 border border-zinc-700/50 p-5 text-center">
+        <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800/30 border border-zinc-200 dark:border-zinc-700/50 p-5 text-center">
           <p className="text-xs text-zinc-500 mb-1">Risparmio mensile stimato</p>
-          <p className="text-3xl font-bold text-white">
+          <p className="text-3xl font-bold">
             {risparmioTotale.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
           </p>
           <div className="mt-2 flex items-center justify-center gap-3 text-xs">
-            <span className="text-zinc-600">Costo: &euro;{costoFleetMind}/mese</span>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-medium">
+            <span className="text-zinc-400 dark:text-zinc-600">Costo: &euro;{costoFleetMind}/mese</span>
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
               ROI: {roi.toFixed(0)}%
             </span>
           </div>
