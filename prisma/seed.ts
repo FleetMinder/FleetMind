@@ -24,7 +24,7 @@ async function main() {
   console.log(`  Azienda: ${company.nome} (${company.id})`);
 
   // ─── Utente demo ───
-  const demoEmail = "andrea.brognera@gmail.com";
+  const demoEmail = "demo@fleetmind.co";
   const existingDemoUser = await prisma.user.findUnique({ where: { email: demoEmail } });
   if (!existingDemoUser) {
     await prisma.user.create({
