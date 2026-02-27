@@ -21,6 +21,9 @@ import {
   FileText,
   AlertTriangle,
   Sparkles,
+  Loader2,
+  Play,
+  TrendingDown,
 } from "lucide-react";
 
 /* ─── Animated counter ─── */
@@ -73,6 +76,25 @@ function FadeIn({
 
 /* ═══════════════════════════════════════════ */
 export default function LandingPage() {
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (planId: string) => {
+    setCheckoutLoading(planId);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setCheckoutLoading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 overflow-x-hidden">
       {/* ─── NAV ─── */}
@@ -93,14 +115,17 @@ export default function LandingPage() {
             <ThemeToggle className="text-zinc-500 dark:text-zinc-400" />
             <Link href="/login">
               <Button variant="ghost" size="sm" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-xs h-8">
-                Accedi
+                Demo
               </Button>
             </Link>
-            <Link href="/login">
-              <Button size="sm" className="bg-blue-700 hover:bg-blue-600 text-white text-xs h-8 px-4">
-                Prova Gratis
-              </Button>
-            </Link>
+            <Button
+              size="sm"
+              className="bg-blue-700 hover:bg-blue-600 text-white text-xs h-8 px-4"
+              onClick={() => handleCheckout("professional")}
+              disabled={checkoutLoading !== null}
+            >
+              {checkoutLoading !== null ? <Loader2 className="h-3 w-3 animate-spin" /> : "Inizia Gratis"}
+            </Button>
           </div>
         </div>
       </nav>
@@ -132,23 +157,31 @@ export default function LandingPage() {
 
           <FadeIn delay={0.15}>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link href="/login">
-                <Button size="lg" className="h-11 px-6 bg-blue-700 hover:bg-blue-600 text-white gap-2">
-                  Inizia Gratis
+              <Button
+                size="lg"
+                className="h-11 px-6 bg-blue-700 hover:bg-blue-600 text-white gap-2"
+                onClick={() => handleCheckout("professional")}
+                disabled={checkoutLoading !== null}
+              >
+                {checkoutLoading === "professional" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
                   <ArrowRight className="h-4 w-4" />
+                )}
+                Inizia Gratis — 14 giorni
+              </Button>
+              <Link href="/login">
+                <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-300 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 gap-2">
+                  <Play className="h-3.5 w-3.5" />
+                  Prova la Demo
                 </Button>
               </Link>
-              <a href="#features">
-                <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-300 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300">
-                  Scopri le funzioni
-                </Button>
-              </a>
             </div>
           </FadeIn>
 
           <FadeIn delay={0.2}>
             <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-600">
-              Nessuna carta di credito &middot; Setup in 2 minuti &middot; 14 giorni gratis
+              14 giorni gratis &middot; Disdici quando vuoi &middot; Setup in 2 minuti
             </p>
           </FadeIn>
 
@@ -340,7 +373,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-20 sm:py-28 border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-5">
           <FadeIn>
-            <div className="text-center mb-14">
+            <div className="text-center mb-10">
               <p className="text-xs font-medium text-blue-400 uppercase tracking-widest mb-3">Pricing</p>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
                 Prezzi semplici, risultati concreti
@@ -349,15 +382,62 @@ export default function LandingPage() {
             </div>
           </FadeIn>
 
+          {/* Competitor comparison callout */}
+          <FadeIn delay={0.05}>
+            <div className="max-w-4xl mx-auto mb-8 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.03] p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <TrendingDown className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">Webfleet Professional</span> per 30 mezzi:{" "}
+                  <span className="line-through text-zinc-400">€510–810/mese</span>
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">FleetMind: €149/mese</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+                  3.4× più economico
+                </span>
+              </div>
+            </div>
+          </FadeIn>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             <FadeIn>
-              <PricingCard nome="Starter" prezzo={49} desc="Fino a 10 mezzi" features={["10 veicoli", "AI Dispatch", "Compliance base", "Supporto email"]} />
+              <PricingCard
+                nome="Starter"
+                planId="starter"
+                prezzo={49}
+                desc="Fino a 10 mezzi"
+                features={["10 veicoli", "AI Dispatch", "Compliance base", "Supporto email"]}
+                onCheckout={handleCheckout}
+                loading={checkoutLoading === "starter"}
+                disabled={checkoutLoading !== null}
+              />
             </FadeIn>
             <FadeIn delay={0.05}>
-              <PricingCard nome="Professional" prezzo={149} desc="Fino a 30 mezzi" features={["30 veicoli", "AI Dispatch avanzato", "Compliance + MIT", "Google Maps routing", "Supporto prioritario"]} evidenziato />
+              <PricingCard
+                nome="Professional"
+                planId="professional"
+                prezzo={149}
+                desc="Fino a 30 mezzi"
+                features={["30 veicoli", "AI Dispatch avanzato", "Compliance + MIT", "Google Maps routing", "Supporto prioritario"]}
+                evidenziato
+                onCheckout={handleCheckout}
+                loading={checkoutLoading === "professional"}
+                disabled={checkoutLoading !== null}
+              />
             </FadeIn>
             <FadeIn delay={0.1}>
-              <PricingCard nome="Business" prezzo={299} desc="Fino a 100 mezzi" features={["100 veicoli", "Tutto Professional +", "e-CMR digitale", "API integrazioni", "Account manager"]} />
+              <PricingCard
+                nome="Business"
+                planId="business"
+                prezzo={299}
+                desc="Fino a 100 mezzi"
+                features={["100 veicoli", "Tutto Professional +", "e-CMR digitale", "API integrazioni", "Account manager"]}
+                onCheckout={handleCheckout}
+                loading={checkoutLoading === "business"}
+                disabled={checkoutLoading !== null}
+              />
             </FadeIn>
           </div>
         </div>
@@ -373,11 +453,24 @@ export default function LandingPage() {
             <p className="mt-3 text-sm text-zinc-500">
               Unisciti alle aziende che usano FleetMind. Setup in 2 minuti, gratis per 14 giorni.
             </p>
-            <div className="mt-8">
-              <Link href="/login">
-                <Button size="lg" className="h-11 px-8 bg-blue-700 hover:bg-blue-600 text-white gap-2">
-                  Inizia Gratis
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Button
+                size="lg"
+                className="h-11 px-8 bg-blue-700 hover:bg-blue-600 text-white gap-2"
+                onClick={() => handleCheckout("professional")}
+                disabled={checkoutLoading !== null}
+              >
+                {checkoutLoading !== null ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
                   <ArrowRight className="h-4 w-4" />
+                )}
+                Inizia Gratis — 14 giorni
+              </Button>
+              <Link href="/login">
+                <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-300 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 gap-2">
+                  <Play className="h-3.5 w-3.5" />
+                  Prova la Demo
                 </Button>
               </Link>
             </div>
@@ -446,16 +539,24 @@ function ProgressBar({ label, value, color }: { label: string; value: number; co
 
 function PricingCard({
   nome,
+  planId,
   prezzo,
   desc,
   features,
   evidenziato,
+  onCheckout,
+  loading,
+  disabled,
 }: {
   nome: string;
+  planId: string;
   prezzo: number;
   desc: string;
   features: string[];
   evidenziato?: boolean;
+  onCheckout: (planId: string) => void;
+  loading?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div
@@ -484,17 +585,20 @@ function PricingCard({
           </li>
         ))}
       </ul>
-      <Link href="/login" className="block">
-        <Button
-          className={`w-full h-9 text-xs ${
-            evidenziato
-              ? "bg-blue-700 hover:bg-blue-600 text-white"
-              : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700"
-          }`}
-        >
-          Inizia Gratis
-        </Button>
-      </Link>
+      <Button
+        className={`w-full h-9 text-xs gap-1.5 ${
+          evidenziato
+            ? "bg-blue-700 hover:bg-blue-600 text-white"
+            : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700"
+        }`}
+        onClick={() => onCheckout(planId)}
+        disabled={disabled}
+      >
+        {loading ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : null}
+        {loading ? "Reindirizzamento..." : "Abbonati — 14 giorni gratis"}
+      </Button>
     </div>
   );
 }

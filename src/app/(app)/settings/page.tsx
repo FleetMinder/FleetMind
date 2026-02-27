@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Fuel,
   RotateCcw,
+  ExternalLink,
 } from "lucide-react";
 
 interface Company {
@@ -27,6 +28,9 @@ interface Company {
   piva: string;
   telefono: string | null;
   email: string | null;
+  subscriptionStatus: string | null;
+  subscriptionCurrentPeriodEnd: string | null;
+  stripeCustomerId: string | null;
 }
 
 interface SettingsData {
@@ -39,41 +43,46 @@ const plans = [
     id: "starter",
     nome: "Starter",
     prezzo: "49",
-    features: ["5 autisti", "10 mezzi", "100 ordini/mese", "AI Dispatch base"],
+    features: ["10 mezzi", "AI Dispatch", "Compliance base", "Supporto email"],
   },
   {
     id: "professional",
     nome: "Professional",
     prezzo: "149",
     features: [
-      "20 autisti",
-      "50 mezzi",
-      "Ordini illimitati",
+      "30 mezzi",
       "AI Dispatch avanzato",
-      "API integrations",
+      "Compliance + MIT",
+      "Google Maps routing",
       "Supporto prioritario",
     ],
   },
   {
-    id: "enterprise",
-    nome: "Enterprise",
-    prezzo: "399",
+    id: "business",
+    nome: "Business",
+    prezzo: "299",
     features: [
-      "Autisti illimitati",
-      "Mezzi illimitati",
-      "Ordini illimitati",
-      "AI Dispatch premium",
-      "Custom integrations",
-      "SLA dedicato",
+      "100 mezzi",
+      "Tutto Professional +",
+      "e-CMR digitale",
+      "API integrazioni",
       "Account manager",
     ],
   },
 ];
 
+const STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  active: { label: "Attivo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
+  trialing: { label: "Trial", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
+  past_due: { label: "Pagamento scaduto", color: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+  canceled: { label: "Cancellato", color: "bg-red-500/10 text-red-600 border-red-500/20" },
+};
+
 export default function SettingsPage() {
   const [data, setData] = useState<SettingsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   // Form state
   const [companyForm, setCompanyForm] = useState<Partial<Company>>({});
@@ -121,6 +130,23 @@ export default function SettingsPage() {
     }
   };
 
+  const handleCheckout = async (planId: string) => {
+    setCheckoutLoading(planId);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: planId }),
+      });
+      const d = await res.json();
+      if (d.url) window.location.href = d.url;
+    } catch {
+      toast.error("Errore nel reindirizzamento al checkout");
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
+
   if (loading || !data) {
     return (
       <div>
@@ -137,6 +163,11 @@ export default function SettingsPage() {
   }
 
   const currentPlan = data.settings.piano_abbonamento || "professional";
+  const subStatus = data.company.subscriptionStatus;
+  const subStatusInfo = subStatus ? STATUS_LABELS[subStatus] : null;
+  const periodEnd = data.company.subscriptionCurrentPeriodEnd
+    ? new Date(data.company.subscriptionCurrentPeriodEnd).toLocaleDateString("it-IT")
+    : null;
 
   return (
     <div>
@@ -190,7 +221,7 @@ export default function SettingsPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="citta">Citta</Label>
+                <Label htmlFor="citta">Città</Label>
                 <Input
                   id="citta"
                   value={companyForm.citta || ""}
@@ -305,11 +336,27 @@ export default function SettingsPage() {
         {/* Subscription plan */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Piano Abbonamento
-            </CardTitle>
-            <CardDescription>Gestisci il tuo piano FleetMind</CardDescription>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Piano Abbonamento
+                </CardTitle>
+                <CardDescription className="mt-1">Gestisci il tuo piano FleetMind</CardDescription>
+              </div>
+              {subStatusInfo && (
+                <div className="flex flex-col items-end gap-1">
+                  <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${subStatusInfo.color}`}>
+                    {subStatusInfo.label}
+                  </span>
+                  {periodEnd && (
+                    <span className="text-[11px] text-muted-foreground">
+                      {subStatus === "canceled" ? "Scaduto il" : "Rinnovo il"} {periodEnd}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -330,7 +377,7 @@ export default function SettingsPage() {
                   )}
                   <h3 className="font-semibold text-lg">{plan.nome}</h3>
                   <p className="text-2xl font-bold mt-1">
-                    {plan.prezzo}
+                    €{plan.prezzo}
                     <span className="text-sm font-normal text-muted-foreground">
                       /mese
                     </span>
@@ -350,10 +397,16 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full mt-4"
-                      onClick={() => toast.info("Funzionalita non disponibile nella demo")}
+                      className="w-full mt-4 gap-1.5"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => handleCheckout(plan.id)}
                     >
-                      Seleziona
+                      {checkoutLoading === plan.id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <ExternalLink className="h-3 w-3" />
+                      )}
+                      {checkoutLoading === plan.id ? "Reindirizzamento..." : "Abbonati"}
                     </Button>
                   )}
                 </div>

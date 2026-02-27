@@ -75,9 +75,13 @@ model Company {
   piva                String   @unique
   telefono            String?
   email               String?
-  onboardingCompleted Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  onboardingCompleted          Boolean   @default(false)
+  stripeCustomerId             String?
+  stripeSubscriptionId         String?
+  subscriptionStatus           String?   // trialing, active, past_due, canceled
+  subscriptionCurrentPeriodEnd DateTime?
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
 
   users    User[]
   drivers  Driver[]
