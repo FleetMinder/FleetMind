@@ -10,6 +10,7 @@ export async function PATCH(
     if (body.patenteScadenza) body.patenteScadenza = new Date(body.patenteScadenza);
     if (body.tachigrafoScadenza) body.tachigrafoScadenza = new Date(body.tachigrafoScadenza);
     if (body.cqcScadenza) body.cqcScadenza = new Date(body.cqcScadenza);
+    if (body.adrScadenza) body.adrScadenza = new Date(body.adrScadenza);
 
     const driver = await prisma.driver.update({
       where: { id: params.id },

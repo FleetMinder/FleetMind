@@ -54,6 +54,8 @@ interface Driver {
   oreRiposoRimanenti: number;
   stato: string;
   telefono: string | null;
+  adrPatentino: string | null;
+  adrScadenza: string | null;
   latitudine: number | null;
   longitudine: number | null;
   trips: Array<{ id: string; stato: string }>;
@@ -123,6 +125,8 @@ export default function DriversPage() {
       tachigrafoScadenza: form.get("tachigrafoScadenza"),
       cartaCQC: form.get("cartaCQC") || null,
       cqcScadenza: form.get("cqcScadenza") || null,
+      adrPatentino: form.get("adrPatentino") || null,
+      adrScadenza: form.get("adrScadenza") || null,
       telefono: form.get("telefono") || null,
     };
     try {
@@ -220,6 +224,10 @@ export default function DriversPage() {
     if (d.cqcScadenza) {
       const cqcAlert = getExpiryAlert(d.cqcScadenza);
       if (cqcAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "CQC", days: cqcAlert.days, type: cqcAlert.type });
+    }
+    if (d.adrPatentino && d.adrScadenza) {
+      const adrAlert = getExpiryAlert(d.adrScadenza);
+      if (adrAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "Patentino ADR", days: adrAlert.days, type: adrAlert.type });
     }
     return alerts;
   });
@@ -336,10 +344,10 @@ export default function DriversPage() {
                 }`}
               />
               <p className="text-sm">
-                <span className="font-medium">{alert.driver}</span> -{" "}
-                {alert.tipo}{" "}
+                <span className="font-medium">{alert.driver}</span> —{" "}
+                {alert.tipo}:{" "}
                 {alert.days <= 0
-                  ? "SCADUTO"
+                  ? "scadenza superata"
                   : `scade tra ${alert.days} giorni`}
               </p>
             </div>
@@ -533,6 +541,17 @@ export default function DriversPage() {
                   <Label htmlFor="edit-cqcScadenza">Scadenza CQC</Label>
                   <Input id="edit-cqcScadenza" name="cqcScadenza" type="date"
                     defaultValue={editingDriver.cqcScadenza?.split("T")[0] || ""} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-adrPatentino">Patentino ADR</Label>
+                  <Input id="edit-adrPatentino" name="adrPatentino" defaultValue={editingDriver.adrPatentino || ""} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-adrScadenza">Scadenza ADR</Label>
+                  <Input id="edit-adrScadenza" name="adrScadenza" type="date"
+                    defaultValue={editingDriver.adrScadenza?.split("T")[0] || ""} />
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={editSaving}>
