@@ -124,9 +124,9 @@ export function checkDriverCompliance(driver: DriverData): ComplianceAlertData[]
   );
   if (cqc) alerts.push(cqc);
 
-  // Tachigrafo
+  // Carta Conducente
   const tachigrafo = checkScadenza(
-    driver.tachigrafoScadenza, "scadenza_tachigrafo", "driver", driver.id, nome, "Tachigrafo"
+    driver.tachigrafoScadenza, "scadenza_tachigrafo", "driver", driver.id, nome, "Carta Conducente"
   );
   if (tachigrafo) alerts.push(tachigrafo);
 

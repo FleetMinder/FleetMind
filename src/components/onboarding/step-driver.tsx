@@ -118,7 +118,7 @@ export function StepDriver({ onComplete, onSkip }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="tachigrafoScadenza">Scadenza Tachigrafo *</Label>
+              <Label htmlFor="tachigrafoScadenza">Scadenza Carta Conducente *</Label>
               <Input id="tachigrafoScadenza" name="tachigrafoScadenza" type="date" required />
             </div>
             <div>
