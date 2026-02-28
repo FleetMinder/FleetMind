@@ -51,6 +51,7 @@ import {
   FileText,
   Flame,
   MapPin,
+  Scale,
 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 
@@ -72,6 +73,7 @@ interface Vehicle {
   anno: number;
   capacitaPesoKg: number;
   capacitaVolumeM3: number;
+  pesoComplessivoKg: number | null;
   consumoKmL: number | null;
   stato: string;
   kmAttuali: number;
@@ -154,6 +156,7 @@ export default function VehiclesPage() {
       tipo: form.get("tipo") as string,
       capacitaPesoKg: parseFloat(form.get("capacitaPesoKg") as string),
       capacitaVolumeM3: parseFloat(form.get("capacitaVolumeM3") as string),
+      pesoComplessivoKg: form.get("pesoComplessivoKg") ? parseFloat(form.get("pesoComplessivoKg") as string) : null,
       consumoKmL: form.get("consumoKmL") ? parseFloat(form.get("consumoKmL") as string) : null,
       prossimaRevisione: (form.get("prossimaRevisione") as string) || null,
       classeEuro: (form.get("classeEuro") as string) || null,
@@ -364,7 +367,7 @@ export default function VehiclesPage() {
                   <Input id="bolloScadenza" name="bolloScadenza" type="date" />
                 </div>
               </div>
-                      <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="adrAbilitato">ADR Abilitato</Label>
                   <select name="adrAbilitato" id="adrAbilitato" className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
@@ -502,6 +505,12 @@ export default function VehiclesPage() {
                     <p className="flex items-center gap-1">
                       <Fuel className="h-3 w-3" />
                       {v.consumoKmL} km/L
+                    </p>
+                  )}
+                  {v.pesoComplessivoKg && (
+                    <p className="flex items-center gap-1">
+                      <Scale className="h-3 w-3" />
+                      PTT: {v.pesoComplessivoKg.toLocaleString("it-IT")} kg
                     </p>
                   )}
                 </div>
@@ -647,10 +656,14 @@ export default function VehiclesPage() {
                   <Input id="edit-capacitaVolumeM3" name="capacitaVolumeM3" type="number" required defaultValue={editingVehicle.capacitaVolumeM3} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <Label htmlFor="edit-consumoKmL">Consumo (km/L)</Label>
                   <Input id="edit-consumoKmL" name="consumoKmL" type="number" step="0.1" defaultValue={editingVehicle.consumoKmL ?? ""} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-pesoComplessivoKg">Peso PTT (kg)</Label>
+                  <Input id="edit-pesoComplessivoKg" name="pesoComplessivoKg" type="number" defaultValue={editingVehicle.pesoComplessivoKg ?? ""} placeholder="es. 26000" />
                 </div>
                 <div>
                   <Label htmlFor="edit-prossimaRevisione">Prossima Revisione</Label>

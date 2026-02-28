@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCompanyId } from "@/lib/company";
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const companyId = await getCompanyId();
     const body = await request.json();
     if (body.prossimaRevisione) body.prossimaRevisione = new Date(body.prossimaRevisione);
     if (body.assicurazioneScadenza) body.assicurazioneScadenza = new Date(body.assicurazioneScadenza);
@@ -13,7 +15,7 @@ export async function PATCH(
     if (body.adrScadenza) body.adrScadenza = new Date(body.adrScadenza);
 
     const vehicle = await prisma.vehicle.update({
-      where: { id: params.id },
+      where: { id: params.id, companyId },
       data: body,
     });
     return NextResponse.json(vehicle);
