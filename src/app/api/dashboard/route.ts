@@ -18,6 +18,8 @@ export async function GET() {
       ordiniPending,
       recentLogs,
       drivers,
+      driverAlerts,
+      vehicleAlerts,
       trips,
     ] = await Promise.all([
       prisma.order.count({
@@ -56,6 +58,21 @@ export async function GET() {
           longitudine: true,
         },
       }),
+      prisma.driver.count({
+        where: {
+          companyId,
+          OR: [
+            { patenteScadenza: { lt: new Date() } },
+            { cqcScadenza: { lt: new Date() } },
+          ],
+        },
+      }),
+      prisma.vehicle.count({
+        where: {
+          companyId,
+          prossimaRevisione: { lt: new Date() },
+        },
+      }),
       prisma.trip.findMany({
         where: { companyId, stato: { in: ["in_corso", "approvato", "pianificato"] } },
         include: {
@@ -69,7 +86,7 @@ export async function GET() {
               destinatarioCitta: true,
             },
           },
-          driver: { select: { nome: true, cognome: true } },
+          driver: { select: { id: true, nome: true, cognome: true } },
         },
       }),
     ]);
@@ -129,6 +146,7 @@ export async function GET() {
       recentLogs,
       drivers,
       trips,
+      complianceCritici: driverAlerts + vehicleAlerts,
       charts: {
         ordini: ordiniChartData,
         trips: trippiChartData,

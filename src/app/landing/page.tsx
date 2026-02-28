@@ -18,7 +18,6 @@ import {
   Gauge,
   MapPin,
   Shield,
-  FileText,
   AlertTriangle,
   Sparkles,
   Loader2,
@@ -191,11 +190,11 @@ export default function LandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-zinc-400 dark:text-zinc-600">
             {[
               { icon: Shield, label: "Reg. CE 561/2006" },
-              { icon: FileText, label: "e-CMR" },
-              { icon: Gauge, label: "Tachigrafo G2V2" },
+              { icon: Gauge, label: "DL 73/2025" },
               { icon: AlertTriangle, label: "ADR" },
               { icon: Euro, label: "Costi Minimi MIT" },
               { icon: MapPin, label: "Zone LEZ" },
+              { icon: ShieldCheck, label: "CQC & Patenti" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-1.5 text-xs">
                 <item.icon className="h-3.5 w-3.5" />
@@ -232,7 +231,7 @@ export default function LandingPage() {
                     </div>
                     <h3 className="text-xl font-semibold mb-1.5">AI Dispatch</h3>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm leading-relaxed">
-                      Pianifica viaggi ottimali in secondi. L&apos;AI considera mezzi, autisti, ore guida, ADR, zone LEZ e finestre orarie.
+                      Pianifica viaggi ottimali in secondi. L&apos;AI considera mezzi, autisti, ore guida, ADR, zone LEZ e tariffe MIT.
                     </p>
                   </div>
                 </div>
@@ -252,16 +251,16 @@ export default function LandingPage() {
               <div className="h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-7 flex flex-col justify-between">
                 <div>
                   <Gauge className="h-5 w-5 text-zinc-400 dark:text-zinc-500 mb-3" />
-                  <h4 className="text-sm font-semibold mb-0.5">Risultati reali</h4>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-600">Impatto medio</p>
+                  <h4 className="text-sm font-semibold mb-0.5">Impatto stimato</h4>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-600">Benchmark di settore</p>
                 </div>
                 <div className="space-y-3 mt-5">
                   <ProgressBar label="Tempo pianificazione" value={89} color="bg-blue-500" />
-                  <ProgressBar label="Errori compliance" value={97} color="bg-emerald-500" />
+                  <ProgressBar label="Pianificazione manuale" value={85} color="bg-emerald-500" />
                   <ProgressBar label="Costi km ottimizzati" value={12} color="bg-amber-500" />
                 </div>
                 <p className="text-[9px] text-zinc-400 dark:text-zinc-700 mt-3 leading-tight">
-                  *Benchmark Confartigianato Trasporti 2024 · ¹Stima interna su routing ottimizzato
+                  *Benchmark Confartigianato Trasporti 2024 · ¹Stima su dispatch agentico multi-ordine
                 </p>
               </div>
             </FadeIn>
@@ -274,10 +273,10 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-lg font-semibold mb-1.5">Compliance Automatica</h3>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">
-                  Alert intelligenti prima che sia troppo tardi. Patenti, CQC, tachigrafo, ADR, revisioni, ore guida.
+                  Alert intelligenti prima che sia troppo tardi. Patenti, CQC, ADR, revisioni mezzo e ore guida settimanali.
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {["Patente/CQC", "Tachigrafo", "ADR", "Revisioni", "Ore guida", "Assicurazione"].map((f) => (
+                  {["Patente/CQC", "ADR", "Revisioni mezzo", "Ore guida", "Reg. CE 561", "DL 73/2025"].map((f) => (
                     <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                       {f}
                     </span>
@@ -297,7 +296,7 @@ export default function LandingPage() {
                   Calcola costi minimi MIT per ogni tratta. Sai subito se una tariffa GDO è sotto-costo.
                 </p>
                 <div className="flex flex-wrap gap-1.5">
-                  {["Costi MIT", "Alert tariffe", "Report PDF", "4 classi peso"].map((f) => (
+                  {["Costi MIT", "Alert tariffe", "Calcolo automatico", "4 classi peso"].map((f) => (
                     <span key={f} className="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                       {f}
                     </span>
@@ -428,7 +427,7 @@ export default function LandingPage() {
                 planId="business"
                 prezzo={299}
                 desc="Fino a 100 mezzi"
-                features={["Fino a 100 veicoli", "Tutto Professional +", "Report & analytics avanzati", "Onboarding assistito", "SLA garantito", "Account manager dedicato"]}
+                features={["Fino a 100 veicoli", "Tutto Professional +", "Onboarding assistito 1:1", "SLA 99,5% garantito", "Account manager dedicato", "Supporto prioritario 24h"]}
                 onCheckout={handleCheckout}
                 loading={checkoutLoading === "business"}
                 disabled={checkoutLoading !== null}
@@ -446,7 +445,7 @@ export default function LandingPage() {
               Pronto a iniziare?
             </h2>
             <p className="mt-3 text-sm text-zinc-500">
-              Unisciti alle aziende che usano FleetMind. Setup in 2 minuti, gratis per 14 giorni.
+              Setup in 2 minuti, nessuna carta di credito. 14 giorni per provare ogni funzionalità.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/login">
@@ -481,8 +480,8 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-5 text-[11px] text-zinc-400 dark:text-zinc-600">
               <span>&copy; 2026 FleetMind</span>
-              <a href="#" className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors">Termini</a>
+              <Link href="/privacy" className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors">Privacy</Link>
+              <Link href="/termini" className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors">Termini</Link>
             </div>
           </div>
         </div>
@@ -606,8 +605,8 @@ function ROICalculator() {
   const kmMedio = parseInt(kmMedioViaggio) || 200;
   const oreGiorno = parseFloat(orePianificazione) || 2;
 
-  const risparmioPianificazione = oreGiorno * 0.8 * 22 * 25;
-  const risparmioKm = (numViaggi * kmMedio * 0.12 * 22 * 1.85) / (numMezzi > 0 ? 3.5 : 1);
+  const risparmioPianificazione = oreGiorno * 0.7 * 22 * 18;
+  const risparmioKm = numViaggi * kmMedio * 22 * 0.30 * 1.85 * 0.03;
   const risparmioMulte = numMezzi * 15;
   const risparmioTotale = risparmioPianificazione + risparmioKm + risparmioMulte;
   const costoFleetMind = numMezzi <= 10 ? 49 : numMezzi <= 30 ? 149 : 299;
@@ -674,7 +673,7 @@ function ROICalculator() {
         </div>
 
         <p className="mt-4 text-[10px] text-zinc-400 dark:text-zinc-600 leading-relaxed text-center">
-          Stime basate su: risparmio tempo = ore pianif./giorno × €22/h × giorni lavorativi; risparmio carburante = km totali × 3% ottimizzazione × €1,85/l; risparmio compliance = costo medio multa tachigrafo (€150) × probabilità riduzione errori (97%). Dati di riferimento: MIT Ministero Infrastrutture tariffe 2024, Confartigianato Trasporti 2024.
+          Stime mensili (22 giorni lavorativi): risparmio tempo = ore pianif./giorno × 70% recuperabile × €18/h (costo orario stimato addetto logistica); risparmio carburante = viaggi/giorno × km medio × consumi 30L/100km × €1,85/L × 3% ottimizzazione routing; risparmio compliance = €15/mezzo/mese (riduzione rischio sanzioni). Dati di riferimento: Confartigianato Trasporti 2024, MIT tariffe 2024.
         </p>
       </div>
     </div>

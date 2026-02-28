@@ -23,7 +23,7 @@ interface TripOrder {
 
 interface Trip {
   id: string;
-  driver: { nome: string; cognome: string };
+  driver: { id: string; nome: string; cognome: string };
   orders: TripOrder[];
 }
 

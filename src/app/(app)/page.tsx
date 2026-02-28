@@ -20,6 +20,7 @@ import {
   Brain,
   ArrowRight,
   Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -37,6 +38,7 @@ interface DashboardData {
     kmPianificati: number;
     costoCarburante: number;
   };
+  complianceCritici: number;
   recentLogs: Array<{
     id: string;
     tipo: string;
@@ -53,7 +55,7 @@ interface DashboardData {
   }>;
   trips: Array<{
     id: string;
-    driver: { nome: string; cognome: string };
+    driver: { id: string; nome: string; cognome: string };
     orders: Array<{
       mittenteLat: number | null;
       mittenteLng: number | null;
@@ -121,6 +123,25 @@ export default function Dashboard() {
             className="flex-shrink-0 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-md transition-colors"
           >
             Crea il tuo account gratuito →
+          </Link>
+        </div>
+      )}
+
+      {/* Compliance alert banner */}
+      {data.complianceCritici > 0 && (
+        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <ShieldAlert className="h-5 w-5 text-red-400 flex-shrink-0" />
+            <p className="text-sm text-red-300">
+              <strong>{data.complianceCritici} alert{data.complianceCritici > 1 ? " critici" : " critico"}</strong>
+              {" "}— documenti scaduti rilevati su autisti o mezzi.
+            </p>
+          </div>
+          <Link
+            href="/compliance"
+            className="flex-shrink-0 text-xs font-semibold text-white bg-red-600 hover:bg-red-500 px-4 py-1.5 rounded-md transition-colors"
+          >
+            Verifica →
           </Link>
         </div>
       )}
@@ -253,22 +274,22 @@ export default function Dashboard() {
             <div className="h-[400px] rounded-lg overflow-hidden">
               <FleetMap drivers={data.drivers} trips={data.trips} />
             </div>
-            <div className="flex gap-4 mt-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
-                Disponibile
+            <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded-full border-2 border-blue-400 bg-black/60 flex items-center justify-center text-blue-400 font-bold" style={{ fontSize: 8 }}>P</span>
+                Partenza
               </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                In viaggio
+              <span className="flex items-center gap-1.5">
+                <span className="w-4 h-4 rounded bg-blue-400 flex items-center justify-center text-white font-bold" style={{ fontSize: 8 }}>A</span>
+                Arrivo
               </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-yellow-500" />
-                Riposo
+              <span className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-blue-400 border-2 border-white" />
+                Autista in transito
               </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-gray-500" />
-                Non disponibile
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-gray-500 opacity-70" />
+                Autista in standby
               </span>
             </div>
           </CardContent>
