@@ -28,13 +28,21 @@ export async function middleware(request: NextRequest) {
   }
 
   // Autenticato ma onboarding non completato → redirect a onboarding
-  // (tranne se è già su /onboarding o sulle API)
-  if (!token.onboardingCompleted && !pathname.startsWith("/onboarding") && !pathname.startsWith("/api/")) {
+  // (tranne se è già su /onboarding, sulle API, o è un utente demo)
+  if (
+    !token.onboardingCompleted &&
+    !(token.isDemoUser as boolean | undefined) &&
+    !pathname.startsWith("/onboarding") &&
+    !pathname.startsWith("/api/")
+  ) {
     return NextResponse.redirect(new URL("/onboarding", request.url));
   }
 
-  // Onboarding completato ma tenta di accedere a /onboarding → redirect a dashboard
-  if (token.onboardingCompleted && pathname.startsWith("/onboarding")) {
+  // Onboarding completato (o utente demo) ma tenta di accedere a /onboarding → redirect a dashboard
+  if (
+    (token.onboardingCompleted || (token.isDemoUser as boolean | undefined)) &&
+    pathname.startsWith("/onboarding")
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

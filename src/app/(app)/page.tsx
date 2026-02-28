@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CardGridSkeleton } from "@/components/shared/loading-skeleton";
@@ -74,6 +75,7 @@ const logIcons: Record<string, React.ReactNode> = {
 };
 
 export default function Dashboard() {
+  const { data: session } = useSession();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -106,6 +108,22 @@ export default function Dashboard() {
         title="Dashboard"
         description="Panoramica operativa in tempo reale"
       />
+
+
+      {/* Demo user banner */}
+      {session?.user?.isDemoUser && (
+        <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-500/10 px-5 py-3 flex items-center justify-between gap-4">
+          <p className="text-sm text-blue-300">
+            🎯 <strong>Account demo</strong> — Stai esplorando FleetMind con dati di esempio.
+          </p>
+          <Link
+            href="/login"
+            className="flex-shrink-0 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-md transition-colors"
+          >
+            Crea il tuo account gratuito →
+          </Link>
+        </div>
+      )}
 
       {/* Welcome banner for empty state */}
       {isEmpty && (

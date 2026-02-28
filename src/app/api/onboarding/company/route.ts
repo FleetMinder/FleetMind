@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
 
 export async function POST(request: Request) {
   try {
@@ -10,10 +11,10 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { nome, indirizzo, citta, cap, piva, telefono, email, userNome, userCognome } = body;
+    const { nome, provincia, numerVeicoli } = body;
 
-    if (!nome || !indirizzo || !citta || !cap || !piva) {
-      return NextResponse.json({ error: "Campi obbligatori mancanti" }, { status: 400 });
+    if (!nome?.trim()) {
+      return NextResponse.json({ error: "Nome azienda obbligatorio" }, { status: 400 });
     }
 
     // Verifica se l'utente ha già un'azienda
@@ -21,30 +22,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Azienda già configurata" }, { status: 400 });
     }
 
-    // Crea azienda e collega l'utente in una transazione
+    // Genera un piva placeholder unico (aggiornabile in seguito dalle impostazioni)
+    const pivaTemp = `TEMP${crypto.randomBytes(6).toString("hex").toUpperCase()}`;
+
     const company = await prisma.company.create({
       data: {
-        nome,
-        indirizzo,
-        citta,
-        cap,
-        piva,
-        telefono: telefono || null,
-        email: email || null,
+        nome: nome.trim(),
+        indirizzo: "Da configurare",
+        citta: provincia || "IT",
+        cap: "00000",
+        piva: pivaTemp,
         users: {
           connect: { id: session.user.id },
         },
       },
     });
 
-    // Aggiorna nome e cognome dell'utente
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        nome: userNome || null,
-        cognome: userCognome || null,
-      },
-    });
+    // Salva nota flotta se fornita (non critica)
+    if (numerVeicoli) {
+      await prisma.activityLog.create({
+        data: {
+          companyId: company.id,
+          tipo: "onboarding",
+          messaggio: `Flotta dichiarata: ${numerVeicoli} veicoli — ${provincia || "N/D"}`,
+        },
+      }).catch(() => {});
+    }
 
     return NextResponse.json({ companyId: company.id });
   } catch (error) {

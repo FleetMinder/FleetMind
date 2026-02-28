@@ -4,7 +4,15 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Rocket, Loader2, Building2, Users, Truck, Brain } from "lucide-react";
-import type { OnboardingData } from "@/app/onboarding/page";
+interface OnboardingData {
+  companyCreated: boolean;
+  companyName: string;
+  driverCreated: boolean;
+  driverName: string;
+  vehicleCreated: boolean;
+  vehiclePlate: string;
+  apiKeySet: boolean;
+}
 
 interface Props {
   data: OnboardingData;

@@ -9,6 +9,7 @@ declare module "next-auth" {
       nome: string | null;
       cognome: string | null;
       onboardingCompleted: boolean;
+      isDemoUser: boolean;
     } & DefaultSession["user"];
   }
 
@@ -28,5 +29,6 @@ declare module "next-auth/jwt" {
     nome: string | null;
     cognome: string | null;
     onboardingCompleted: boolean;
+    isDemoUser: boolean;
   }
 }

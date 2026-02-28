@@ -6,7 +6,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Truck, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Truck, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, ArrowLeft } from "lucide-react";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -210,6 +211,14 @@ export default function LoginPage() {
       <p className="text-center text-xs text-muted-foreground">
         Nessuna password da ricordare. Accedi con Google o via Magic Link.
       </p>
+
+      {/* Back to home */}
+      <div className="text-center">
+        <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-3 w-3" />
+          Torna alla home
+        </Link>
+      </div>
     </div>
   );
 }

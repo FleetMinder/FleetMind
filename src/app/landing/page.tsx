@@ -113,7 +113,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle className="text-zinc-500 dark:text-zinc-400" />
-            <Link href="/login">
+            <Link href="/api/auth/demo-login">
               <Button variant="ghost" size="sm" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-xs h-8">
                 Demo
               </Button>
@@ -156,33 +156,20 @@ export default function LandingPage() {
           </FadeIn>
 
           <FadeIn delay={0.15}>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button
-                size="lg"
-                className="h-11 px-6 bg-blue-700 hover:bg-blue-600 text-white gap-2"
-                onClick={() => handleCheckout("professional")}
-                disabled={checkoutLoading !== null}
-              >
-                {checkoutLoading === "professional" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ArrowRight className="h-4 w-4" />
-                )}
-                Inizia Gratis — 14 giorni
-              </Button>
+            <div className="mt-8 flex flex-col items-center gap-3">
               <Link href="/login">
-                <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-300 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 gap-2">
-                  <Play className="h-3.5 w-3.5" />
-                  Prova la Demo
+                <Button
+                  size="lg"
+                  className="h-11 px-8 bg-blue-700 hover:bg-blue-600 text-white gap-2"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                  Prova FleetMind gratis →
                 </Button>
               </Link>
+              <p className="text-xs text-zinc-400 dark:text-zinc-600">
+                Nessuna carta di credito &nbsp;•&nbsp; Setup in 2 minuti &nbsp;•&nbsp; Disdici quando vuoi
+              </p>
             </div>
-          </FadeIn>
-
-          <FadeIn delay={0.2}>
-            <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-600">
-              14 giorni gratis &middot; Disdici quando vuoi &middot; Setup in 2 minuti
-            </p>
           </FadeIn>
 
           {/* Stats */}

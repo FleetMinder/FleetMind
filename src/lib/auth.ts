@@ -97,6 +97,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.companyId = user.companyId;
         token.ruolo = user.ruolo;
+        token.isDemoUser = user.email === "demo@fleetmind.co";
 
         // Per Google OAuth, popola nome/cognome dall'account Google
         if (account?.provider === "google") {
@@ -115,7 +116,8 @@ export const authOptions: NextAuthOptions = {
           });
           token.onboardingCompleted = company?.onboardingCompleted ?? false;
         } else {
-          token.onboardingCompleted = false;
+          // Demo users skip onboarding
+          token.onboardingCompleted = token.isDemoUser ? true : false;
         }
       }
 
@@ -137,6 +139,7 @@ export const authOptions: NextAuthOptions = {
         session.user.nome = token.nome;
         session.user.cognome = token.cognome;
         session.user.onboardingCompleted = token.onboardingCompleted;
+        session.user.isDemoUser = token.isDemoUser ?? false;
       }
       return session;
     },
