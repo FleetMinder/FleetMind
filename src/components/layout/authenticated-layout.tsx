@@ -6,16 +6,21 @@ import { PaywallOverlay } from "@/components/paywall-overlay";
 interface Props {
   children: React.ReactNode;
   showPaywall?: boolean;
+  isDemoUser?: boolean;
 }
 
-export function AuthenticatedLayout({ children, showPaywall = false }: Props) {
+export function AuthenticatedLayout({
+  children,
+  showPaywall = false,
+  isDemoUser = false,
+}: Props) {
   return (
     <>
       <Sidebar />
       <main className="lg:ml-64 min-h-screen">
         <div className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-6">{children}</div>
       </main>
-      {showPaywall && <PaywallOverlay />}
+      {showPaywall && <PaywallOverlay isDemoUser={isDemoUser} />}
     </>
   );
 }
