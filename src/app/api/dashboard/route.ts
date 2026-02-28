@@ -21,27 +21,22 @@ export async function GET() {
       driverAlerts,
       vehicleAlerts,
       trips,
+      kmPianificati,
+      costoCarburante,
+      ordiniByStato,
+      tripsByStato,
     ] = await Promise.all([
       prisma.order.count({
-        where: {
-          companyId,
-          createdAt: { gte: sevenDaysAgo },
-        },
+        where: { companyId, createdAt: { gte: sevenDaysAgo } },
       }),
-      prisma.driver.count({
-        where: { companyId, stato: "disponibile" },
-      }),
+      prisma.driver.count({ where: { companyId, stato: "disponibile" } }),
       prisma.driver.count({ where: { companyId } }),
-      prisma.vehicle.count({
-        where: { companyId, stato: "disponibile" },
-      }),
+      prisma.vehicle.count({ where: { companyId, stato: "disponibile" } }),
       prisma.vehicle.count({ where: { companyId } }),
       prisma.trip.count({
         where: { companyId, stato: { in: ["in_corso", "approvato"] } },
       }),
-      prisma.order.count({
-        where: { companyId, stato: "pending" },
-      }),
+      prisma.order.count({ where: { companyId, stato: "pending" } }),
       prisma.activityLog.findMany({
         where: { companyId },
         orderBy: { createdAt: "desc" },
@@ -95,36 +90,26 @@ export async function GET() {
           driver: { select: { id: true, nome: true, cognome: true } },
         },
       }),
+      prisma.trip.aggregate({
+        where: { companyId, stato: { in: ["pianificato", "approvato", "in_corso"] } },
+        _sum: { kmTotali: true },
+      }),
+      prisma.trip.aggregate({
+        where: { companyId, stato: { in: ["pianificato", "approvato", "in_corso"] } },
+        _sum: { costoCarburanteStimato: true },
+      }),
+      prisma.order.groupBy({
+        by: ["stato"],
+        where: { companyId },
+        _count: { stato: true },
+      }),
+      prisma.trip.groupBy({
+        by: ["stato"],
+        where: { companyId },
+        _count: { stato: true },
+        _sum: { kmTotali: true },
+      }),
     ]);
-
-    const [kmPianificati, costoCarburante, ordiniByStato, tripsByStato] =
-      await Promise.all([
-        prisma.trip.aggregate({
-          where: {
-            companyId,
-            stato: { in: ["pianificato", "approvato", "in_corso"] },
-          },
-          _sum: { kmTotali: true },
-        }),
-        prisma.trip.aggregate({
-          where: {
-            companyId,
-            stato: { in: ["pianificato", "approvato", "in_corso"] },
-          },
-          _sum: { costoCarburanteStimato: true },
-        }),
-        prisma.order.groupBy({
-          by: ["stato"],
-          where: { companyId },
-          _count: { stato: true },
-        }),
-        prisma.trip.groupBy({
-          by: ["stato"],
-          where: { companyId },
-          _count: { stato: true },
-          _sum: { kmTotali: true },
-        }),
-      ]);
 
     const ordiniChartData = ordiniByStato.map((r) => ({
       stato: r.stato,
