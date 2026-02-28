@@ -226,10 +226,10 @@ export default function LandingPage() {
             <div className="text-center mb-14">
               <p className="text-xs font-medium text-blue-400 uppercase tracking-widest mb-3">La piattaforma</p>
               <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
-                Tre moduli, un unico sistema
+                Un cervello AI per la tua flotta
               </h2>
               <p className="mt-3 text-sm text-zinc-500 max-w-lg mx-auto">
-                Ogni modulo risolve un problema critico. Insieme, trasformano il tuo ufficio.
+                Pianifica, controlla e proteggi le tue operazioni — tutto in un posto.
               </p>
             </div>
           </FadeIn>
