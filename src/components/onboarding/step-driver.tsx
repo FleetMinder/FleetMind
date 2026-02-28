@@ -85,7 +85,7 @@ export function StepDriver({ onComplete, onSkip }: Props) {
               <select
                 name="patenteTipo"
                 id="patenteTipo"
-                className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                 required
               >
                 <option value="B">B</option>

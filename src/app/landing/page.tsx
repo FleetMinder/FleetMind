@@ -118,14 +118,14 @@ export default function LandingPage() {
                 Demo
               </Button>
             </Link>
-            <Button
-              size="sm"
-              className="bg-blue-700 hover:bg-blue-600 text-white text-xs h-8 px-4"
-              onClick={() => handleCheckout("professional")}
-              disabled={checkoutLoading !== null}
-            >
-              {checkoutLoading !== null ? <Loader2 className="h-3 w-3 animate-spin" /> : "Inizia Gratis"}
-            </Button>
+            <Link href="/login">
+              <Button
+                size="sm"
+                className="bg-blue-700 hover:bg-blue-600 text-white text-xs h-8 px-4"
+              >
+                Inizia Gratis
+              </Button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -449,20 +449,16 @@ export default function LandingPage() {
               Unisciti alle aziende che usano FleetMind. Setup in 2 minuti, gratis per 14 giorni.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button
-                size="lg"
-                className="h-11 px-8 bg-blue-700 hover:bg-blue-600 text-white gap-2"
-                onClick={() => handleCheckout("professional")}
-                disabled={checkoutLoading !== null}
-              >
-                {checkoutLoading !== null ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ArrowRight className="h-4 w-4" />
-                )}
-                Inizia Gratis — 14 giorni
-              </Button>
               <Link href="/login">
+                <Button
+                  size="lg"
+                  className="h-11 px-8 bg-blue-700 hover:bg-blue-600 text-white gap-2"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                  Inizia Gratis — 14 giorni
+                </Button>
+              </Link>
+              <Link href="/api/auth/demo-login">
                 <Button variant="outline" size="lg" className="h-11 px-6 border-zinc-300 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 gap-2">
                   <Play className="h-3.5 w-3.5" />
                   Prova la Demo

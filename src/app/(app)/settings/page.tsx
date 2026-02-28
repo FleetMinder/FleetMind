@@ -15,7 +15,6 @@ import {
   Loader2,
   CheckCircle2,
   Fuel,
-  RotateCcw,
   ExternalLink,
 } from "lucide-react";
 
@@ -87,8 +86,6 @@ export default function SettingsPage() {
   // Form state
   const [companyForm, setCompanyForm] = useState<Partial<Company>>({});
   const [costoCarburante, setCostoCarburante] = useState("1.85");
-  const [resetting, setResetting] = useState(false);
-
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
@@ -291,45 +288,6 @@ export default function SettingsPage() {
                 Usato per la stima dei costi carburante nelle tratte
               </p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Demo reset */}
-        <Card className="border-amber-500/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-400">
-              <RotateCcw className="h-5 w-5" />
-              Reset Demo
-            </CardTitle>
-            <CardDescription>
-              Ripristina lo stato iniziale dell&apos;account demo: elimina tutti i viaggi, riporta ordini a pending e autisti/mezzi a disponibili.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="outline"
-              className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-              disabled={resetting}
-              onClick={async () => {
-                setResetting(true);
-                try {
-                  const res = await fetch("/api/demo-reset", { method: "POST" });
-                  if (!res.ok) throw new Error();
-                  toast.success("Demo ripristinato! Ora puoi ricominciare dall'inizio.");
-                } catch {
-                  toast.error("Errore nel reset demo");
-                } finally {
-                  setResetting(false);
-                }
-              }}
-            >
-              {resetting ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <RotateCcw className="h-4 w-4 mr-2" />
-              )}
-              {resetting ? "Ripristino in corso..." : "Ripristina Demo"}
-            </Button>
           </CardContent>
         </Card>
 

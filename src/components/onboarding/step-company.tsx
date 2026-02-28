@@ -97,7 +97,7 @@ export function StepCompany({ onComplete, onSkip }: Props) {
             <select
               name="numerVeicoli"
               id="numerVeicoli"
-              className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="mt-1 w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             >
               <option value="1-5">1 – 5 veicoli</option>
               <option value="6-15">6 – 15 veicoli</option>
@@ -111,7 +111,7 @@ export function StepCompany({ onComplete, onSkip }: Props) {
             <select
               name="provincia"
               id="provincia"
-              className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+              className="mt-1 w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
             >
               <option value="">Seleziona provincia…</option>
               {PROVINCE_ITALIANE.map((p) => (

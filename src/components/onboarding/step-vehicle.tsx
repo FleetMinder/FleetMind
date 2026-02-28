@@ -72,7 +72,7 @@ export function StepVehicle({ onComplete, onSkip }: Props) {
               <select
                 name="tipo"
                 id="tipo"
-                className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                 required
               >
                 <option value="furgone">Furgone</option>

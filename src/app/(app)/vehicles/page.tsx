@@ -245,7 +245,7 @@ export default function VehiclesPage() {
                 </div>
                 <div>
                   <Label htmlFor="tipo">Tipo</Label>
-                  <select name="tipo" id="tipo" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" required>
+                  <select name="tipo" id="tipo" className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" required>
                     <option value="furgone">Furgone</option>
                     <option value="camion">Camion</option>
                     <option value="furgone_frigo">Furgone Frigo</option>
@@ -291,7 +291,7 @@ export default function VehiclesPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="classeEuro">Classe Euro</Label>
-                  <select name="classeEuro" id="classeEuro" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+                  <select name="classeEuro" id="classeEuro" className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
                     <option value="">Non specificata</option>
                     <option value="Euro 3">Euro 3</option>
                     <option value="Euro 4">Euro 4</option>
@@ -507,7 +507,7 @@ export default function VehiclesPage() {
               </div>
               <div>
                 <Label htmlFor="edit-tipo">Tipo</Label>
-                <select name="tipo" id="edit-tipo" defaultValue={editingVehicle.tipo} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" required>
+                <select name="tipo" id="edit-tipo" defaultValue={editingVehicle.tipo} className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" required>
                   <option value="furgone">Furgone</option>
                   <option value="camion">Camion</option>
                   <option value="furgone_frigo">Furgone Frigo</option>

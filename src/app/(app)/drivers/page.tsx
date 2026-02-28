@@ -264,7 +264,7 @@ export default function DriversPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="patenteTipo">Tipo Patente</Label>
-                  <select name="patenteTipo" id="patenteTipo" className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" required>
+                  <select name="patenteTipo" id="patenteTipo" className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" required>
                     <option value="B">B</option>
                     <option value="C">C</option>
                     <option value="CE">CE</option>
@@ -490,7 +490,7 @@ export default function DriversPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="edit-patenteTipo">Tipo Patente</Label>
-                  <select name="patenteTipo" id="edit-patenteTipo" defaultValue={editingDriver.patenteTipo} className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm" required>
+                  <select name="patenteTipo" id="edit-patenteTipo" defaultValue={editingDriver.patenteTipo} className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" required>
                     <option value="B">B</option>
                     <option value="C">C</option>
                     <option value="CE">CE</option>
