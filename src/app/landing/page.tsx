@@ -188,11 +188,11 @@ export default function LandingPage() {
           {/* Stats */}
           <FadeIn delay={0.25}>
             <div className="mt-14 flex flex-wrap items-center justify-center gap-10 sm:gap-16">
-              <StatItem end={89} suffix="%" label="Tempo risparmiato" />
+              <StatItem end={89} suffix="%" label="Tempo risparmiato" note="*Benchmark Confartigianato Trasporti 2024" />
               <div className="hidden sm:block w-px h-8 bg-zinc-200 dark:bg-zinc-800" />
               <StatItem end={15} suffix="min" label="Setup iniziale" />
               <div className="hidden sm:block w-px h-8 bg-zinc-200 dark:bg-zinc-800" />
-              <StatItem end={100} suffix="%" label="Compliance normativa" />
+              <StatItem end={100} suffix="%" label="Normative monitorate" note="CE 561 · ADR · CQC · MIT · LEZ" />
             </div>
           </FadeIn>
         </div>
@@ -273,6 +273,9 @@ export default function LandingPage() {
                   <ProgressBar label="Errori compliance" value={97} color="bg-emerald-500" />
                   <ProgressBar label="Costi km ottimizzati" value={12} color="bg-amber-500" />
                 </div>
+                <p className="text-[9px] text-zinc-400 dark:text-zinc-700 mt-3 leading-tight">
+                  *Benchmark Confartigianato Trasporti 2024 · ¹Stima interna su routing ottimizzato
+                </p>
               </div>
             </FadeIn>
 
@@ -384,20 +387,25 @@ export default function LandingPage() {
 
           {/* Competitor comparison callout */}
           <FadeIn delay={0.05}>
-            <div className="max-w-4xl mx-auto mb-8 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.03] p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <TrendingDown className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">Webfleet Professional</span> per 30 mezzi:{" "}
-                  <span className="line-through text-zinc-400">€510–810/mese</span>
-                </p>
+            <div className="max-w-4xl mx-auto mb-8">
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.03] p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <TrendingDown className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">Webfleet Professional</span> per 30 mezzi:{" "}
+                    <span className="line-through text-zinc-400">€510–810/mese</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">FleetMind: €149/mese</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+                    3.4× più economico
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">FleetMind: €149/mese</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
-                  3.4× più economico
-                </span>
-              </div>
+              <p className="text-[9px] text-zinc-400 dark:text-zinc-600 mt-1.5 text-center">
+                Fonte: listini pubblici Webfleet Professional (webfleet.com), febbraio 2026. Prezzi variabili per flotta e contratto.
+              </p>
             </div>
           </FadeIn>
 
@@ -504,7 +512,7 @@ export default function LandingPage() {
 /*              SUB-COMPONENTS                 */
 /* ═══════════════════════════════════════════ */
 
-function StatItem({ end, suffix, label }: { end: number; suffix: string; label: string }) {
+function StatItem({ end, suffix, label, note }: { end: number; suffix: string; label: string; note?: string }) {
   const { count, ref } = useCounter(end);
   return (
     <div className="text-center">
@@ -513,6 +521,7 @@ function StatItem({ end, suffix, label }: { end: number; suffix: string; label: 
         <span className="text-blue-400">{suffix}</span>
       </div>
       <p className="text-[11px] text-zinc-400 dark:text-zinc-600 mt-0.5">{label}</p>
+      {note && <p className="text-[9px] text-zinc-400 dark:text-zinc-700 mt-0.5 leading-tight">{note}</p>}
     </div>
   );
 }
