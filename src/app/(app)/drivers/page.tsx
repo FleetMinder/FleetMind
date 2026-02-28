@@ -34,6 +34,7 @@ import {
   Shield,
   Users,
   Pencil,
+  Link2,
 } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { format, differenceInDays } from "date-fns";
@@ -384,6 +385,16 @@ export default function DriversPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://fleetmind.co/track/${driver.id}`);
+                        toast.success("Link tracking copiato!");
+                      }}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                      title="Copia link tracking"
+                    >
+                      <Link2 className="h-3.5 w-3.5" />
+                    </button>
                     <button
                       onClick={() => setEditingDriver(driver)}
                       className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"

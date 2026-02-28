@@ -97,6 +97,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
+    const interval = setInterval(fetchData, 10_000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading || !data) {
