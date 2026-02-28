@@ -21,6 +21,7 @@ import {
   ArrowRight,
   Sparkles,
   ShieldAlert,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -80,13 +81,22 @@ export default function Dashboard() {
   const { data: session } = useSession();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setRefreshing(true);
     fetch("/api/dashboard")
       .then((res) => res.json())
       .then(setData)
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   if (loading || !data) {
@@ -94,7 +104,7 @@ export default function Dashboard() {
       <div>
         <PageHeader
           title="Dashboard"
-          description="Panoramica operativa in tempo reale"
+          description="Panoramica operativa della flotta"
         />
         <CardGridSkeleton count={4} />
       </div>
@@ -108,7 +118,7 @@ export default function Dashboard() {
     <div>
       <PageHeader
         title="Dashboard"
-        description="Panoramica operativa in tempo reale"
+        description="Panoramica operativa della flotta"
       />
 
 
@@ -157,7 +167,7 @@ export default function Dashboard() {
               <div>
                 <h3 className="text-lg font-semibold">Benvenuto in FleetMind!</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  La tua piattaforma e pronta. Inizia configurando la tua flotta per sfruttare la pianificazione AI.
+                  La tua piattaforma è pronta. Inizia configurando la tua flotta per sfruttare la pianificazione AI.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -256,7 +266,7 @@ export default function Dashboard() {
                 currency: "EUR",
               })}
             </div>
-            <p className="text-xs text-muted-foreground">Stima giornaliera</p>
+            <p className="text-xs text-muted-foreground">Tratte in corso e pianificate</p>
           </CardContent>
         </Card>
       </div>
@@ -264,11 +274,19 @@ export default function Dashboard() {
       {/* Map and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="flex items-center gap-2">
               <Truck className="h-5 w-5" />
               Mappa Flotta
             </CardTitle>
+            <button
+              onClick={fetchData}
+              disabled={refreshing}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? "animate-spin" : ""}`} />
+              Aggiorna
+            </button>
           </CardHeader>
           <CardContent>
             <div className="h-[400px] rounded-lg overflow-hidden">
@@ -299,7 +317,7 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Attivita Recenti
+              Attività Recenti
             </CardTitle>
           </CardHeader>
           <CardContent>
