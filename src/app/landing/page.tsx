@@ -619,6 +619,7 @@ function ROICalculator() {
   const risparmioMulte = numMezzi * 15;
   const risparmioTotale = risparmioPianificazione + risparmioKm + risparmioMulte;
   const costoFleetMind = numMezzi <= 10 ? 49 : numMezzi <= 30 ? 149 : 299;
+  const risparmioNetto = risparmioTotale - costoFleetMind;
   const roi = ((risparmioTotale - costoFleetMind) / costoFleetMind) * 100;
 
   return (
@@ -670,13 +671,19 @@ function ROICalculator() {
           <p className="text-3xl font-bold">
             {risparmioTotale.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
           </p>
-          <div className="mt-2 flex items-center justify-center gap-3 text-xs">
-            <span className="text-zinc-400 dark:text-zinc-600">Costo: &euro;{costoFleetMind}/mese</span>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
-              ROI: {roi.toFixed(0)}%
-            </span>
+          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700/50">
+            <p className="text-[11px] text-zinc-500 mb-1">Risparmio netto mensile vs costo abbonamento</p>
+            <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+              {risparmioNetto.toLocaleString("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
+            </p>
+            <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">Con soli €{costoFleetMind}/mese</p>
+            <p className="text-[10px] text-zinc-400 dark:text-zinc-600 mt-1.5">ROI: {roi.toFixed(0)}%</p>
           </div>
         </div>
+
+        <p className="mt-4 text-[10px] text-zinc-400 dark:text-zinc-600 leading-relaxed text-center">
+          Stime basate su: risparmio tempo = ore pianif./giorno × €22/h × giorni lavorativi; risparmio carburante = km totali × 3% ottimizzazione × €1,85/l; risparmio compliance = costo medio multa tachigrafo (€150) × probabilità riduzione errori (97%). Dati di riferimento: MIT Ministero Infrastrutture tariffe 2024, Confartigianato Trasporti 2024.
+        </p>
       </div>
     </div>
   );
