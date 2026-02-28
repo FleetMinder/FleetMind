@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Truck, Mail, Loader2, ArrowRight } from "lucide-react";
+import { Truck, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -31,11 +31,27 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
+const PLAN_LABELS: Record<string, string> = {
+  starter: "Starter",
+  professional: "Professional",
+  business: "Business",
+};
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
+  const [subscriptionSuccess, setSubscriptionSuccess] = useState(false);
+  const [successPlan, setSuccessPlan] = useState("professional");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("subscriptionSuccess") === "true") {
+      setSubscriptionSuccess(true);
+      setSuccessPlan(params.get("plan") || "professional");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +88,24 @@ export default function LoginPage() {
 
   return (
     <div className="space-y-8">
+      {/* Subscription success banner */}
+      {subscriptionSuccess && (
+        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 flex gap-3 items-start">
+          <div className="mt-0.5 flex-shrink-0">
+            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+          </div>
+          <div>
+            <p className="font-semibold text-emerald-300 flex items-center gap-1.5">
+              Piano {PLAN_LABELS[successPlan]} attivato!
+              <Sparkles className="h-4 w-4" />
+            </p>
+            <p className="text-sm text-emerald-300/80 mt-0.5">
+              14 giorni di trial gratuito iniziati. Accedi per iniziare a usare FleetMind.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Logo */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30">

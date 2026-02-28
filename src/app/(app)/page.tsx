@@ -23,18 +23,6 @@ import {
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { it } from "date-fns/locale";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
 
 interface DashboardData {
   kpi: {
@@ -74,43 +62,7 @@ interface DashboardData {
       destinatarioCitta: string;
     }>;
   }>;
-  charts?: {
-    ordini: Array<{ stato: string; count: number }>;
-    trips: Array<{ stato: string; count: number; km: number }>;
-  };
 }
-
-const ORDER_COLORS: Record<string, string> = {
-  pending: "#f59e0b",
-  assegnato: "#3b82f6",
-  in_corso: "#8b5cf6",
-  completato: "#22c55e",
-  annullato: "#6b7280",
-};
-
-const ORDER_LABELS: Record<string, string> = {
-  pending: "Pending",
-  assegnato: "Assegnato",
-  in_corso: "In Corso",
-  completato: "Completato",
-  annullato: "Annullato",
-};
-
-const TRIP_COLORS: Record<string, string> = {
-  pianificato: "#3b82f6",
-  approvato: "#8b5cf6",
-  in_corso: "#f59e0b",
-  completato: "#22c55e",
-  annullato: "#6b7280",
-};
-
-const TRIP_LABELS: Record<string, string> = {
-  pianificato: "Pian.",
-  approvato: "Approv.",
-  in_corso: "In Corso",
-  completato: "Complet.",
-  annullato: "Annull.",
-};
 
 const logIcons: Record<string, React.ReactNode> = {
   order_created: <Package className="h-4 w-4 text-blue-400" />,
@@ -269,94 +221,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Charts */}
-      {data.charts && (data.charts.ordini.length > 0 || data.charts.trips.length > 0) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Orders donut */}
-          {data.charts.ordini.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Package className="h-4 w-4" />
-                  Ordini per Stato
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={220}>
-                  <PieChart>
-                    <Pie
-                      data={data.charts.ordini}
-                      dataKey="count"
-                      nameKey="stato"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={75}
-                      innerRadius={40}
-                      paddingAngle={3}
-                    >
-                      {data.charts.ordini.map((entry) => (
-                        <Cell
-                          key={entry.stato}
-                          fill={ORDER_COLORS[entry.stato] || "#6b7280"}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(v: number | undefined, name: string | undefined) => [v ?? 0, (ORDER_LABELS[name ?? ""] || name) ?? ""]}
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                    />
-                    <Legend
-                      formatter={(value) => ORDER_LABELS[value] || value}
-                      iconType="circle"
-                      iconSize={8}
-                      wrapperStyle={{ fontSize: "11px" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Trips bar */}
-          {data.charts.trips.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Route className="h-4 w-4" />
-                  Km per Stato Tratta
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart
-                    data={data.charts.trips.map((t) => ({
-                      ...t,
-                      label: TRIP_LABELS[t.stato] || t.stato,
-                    }))}
-                    margin={{ top: 4, right: 8, left: 0, bottom: 4 }}
-                  >
-                    <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 11 }} unit=" km" width={60} />
-                    <Tooltip
-                      formatter={(v: number | undefined) => [`${v ?? 0} km`, "Km totali"]}
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                    />
-                    <Bar dataKey="km" radius={[4, 4, 0, 0]}>
-                      {data.charts.trips.map((entry) => (
-                        <Cell
-                          key={entry.stato}
-                          fill={TRIP_COLORS[entry.stato] || "#6b7280"}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      )}
 
       {/* Map and Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
