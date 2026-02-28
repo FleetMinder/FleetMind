@@ -35,6 +35,7 @@ import {
   Users,
   Pencil,
   Link2,
+  Flame,
 } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { format, differenceInDays } from "date-fns";
@@ -222,7 +223,7 @@ export default function DriversPage() {
     const patAlert = getExpiryAlert(d.patenteScadenza);
     if (patAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "Patente", days: patAlert.days, type: patAlert.type });
     const tachAlert = getExpiryAlert(d.tachigrafoScadenza);
-    if (tachAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "Tachigrafo", days: tachAlert.days, type: tachAlert.type });
+    if (tachAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "Carta Conducente", days: tachAlert.days, type: tachAlert.type });
     if (d.cqcScadenza) {
       const cqcAlert = getExpiryAlert(d.cqcScadenza);
       if (cqcAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "CQC", days: cqcAlert.days, type: cqcAlert.type });
@@ -232,6 +233,10 @@ export default function DriversPage() {
       if (adrAlert.type) alerts.push({ driver: `${d.nome} ${d.cognome}`, tipo: "Patentino ADR", days: adrAlert.days, type: adrAlert.type });
     }
     return alerts;
+  }).sort((a, b) => {
+    if (a.type === "danger" && b.type !== "danger") return -1;
+    if (a.type !== "danger" && b.type === "danger") return 1;
+    return a.days - b.days;
   });
 
   if (loading) {
@@ -292,7 +297,7 @@ export default function DriversPage() {
                   <Input id="patenteScadenza" name="patenteScadenza" type="date" required />
                 </div>
                 <div>
-                  <Label htmlFor="tachigrafoScadenza">Scadenza Tachigrafo</Label>
+                  <Label htmlFor="tachigrafoScadenza">Scadenza Carta Conducente</Label>
                   <Input id="tachigrafoScadenza" name="tachigrafoScadenza" type="date" required />
                 </div>
               </div>
@@ -473,7 +478,7 @@ export default function DriversPage() {
                   </p>
                   <p className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    Tachigrafo:{" "}
+                    Carta cond.:{" "}
                     {format(new Date(driver.tachigrafoScadenza), "dd/MM/yyyy")}
                   </p>
                   {driver.cqcScadenza && (
@@ -485,7 +490,7 @@ export default function DriversPage() {
                   )}
                   {driver.adrPatentino && driver.adrScadenza && (
                     <p className="flex items-center gap-1">
-                      <AlertTriangle className="h-3 w-3" />
+                      <Flame className="h-3 w-3" />
                       ADR:{" "}
                       {format(new Date(driver.adrScadenza), "dd/MM/yyyy")}
                     </p>
@@ -493,7 +498,7 @@ export default function DriversPage() {
                   {driver.trips.length > 0 && (
                     <p className="flex items-center gap-1 text-primary">
                       <MapPin className="h-3 w-3" />
-                      {driver.trips.length} tratta/e attiva/e
+                      {driver.trips.length === 1 ? "1 tratta attiva" : `${driver.trips.length} tratte attive`}
                     </p>
                   )}
                 </div>
@@ -539,7 +544,7 @@ export default function DriversPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="edit-tachigrafoScadenza">Scadenza Tachigrafo</Label>
+                  <Label htmlFor="edit-tachigrafoScadenza">Scadenza Carta Conducente</Label>
                   <Input id="edit-tachigrafoScadenza" name="tachigrafoScadenza" type="date" required
                     defaultValue={editingDriver.tachigrafoScadenza?.split("T")[0]} />
                 </div>
