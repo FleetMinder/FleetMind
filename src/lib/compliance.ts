@@ -204,7 +204,7 @@ export function checkVehicleCompliance(vehicle: VehicleData): ComplianceAlertDat
   if (lez.avviso) {
     alerts.push({
       tipo: "euro5_ban",
-      severity: vehicle.classeEuro && vehicle.classeEuro.includes("5") ? "avviso" : "info",
+      severity: "avviso",
       entitaTipo: "vehicle",
       entitaId: vehicle.id,
       entitaNome: vehicle.targa,

@@ -213,7 +213,7 @@ export default function CompliancePage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-muted-foreground">Autisti</p>
+                  <p className="text-xs text-muted-foreground">Alert Autisti</p>
                   <p className="text-2xl font-bold">{stats.perTipo.autisti}</p>
                 </div>
                 <User className="h-8 w-8 text-muted-foreground/30" />
@@ -224,7 +224,7 @@ export default function CompliancePage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-muted-foreground">Veicoli</p>
+                  <p className="text-xs text-muted-foreground">Alert Veicoli</p>
                   <p className="text-2xl font-bold">{stats.perTipo.veicoli}</p>
                 </div>
                 <Truck className="h-8 w-8 text-muted-foreground/30" />
@@ -438,7 +438,7 @@ export default function CompliancePage() {
                 Tabelle Costi Minimi MIT — Aggiornamento Giugno 2025
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                D.D. n.279 del 5 agosto 2025 — Ministero Infrastrutture e Trasporti
+                D.D. n.279 del 5 agosto 2025 — Ministero Infrastrutture e Trasporti · Aggiornamento trimestrale
               </p>
             </CardHeader>
             <CardContent>
