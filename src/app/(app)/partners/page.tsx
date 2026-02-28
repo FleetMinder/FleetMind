@@ -248,9 +248,12 @@ export default function PartnersPage() {
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error();
-      setPartners((prev) =>
-        prev.map((p) => (p.id === editingPartner.id ? { ...p, ...body } : p))
-      );
+      setPartners((prev) => {
+        const updated = prev.map((p) =>
+          p.id === editingPartner.id ? { ...p, ...body } : p
+        );
+        return [...updated].sort((a, b) => b.rating - a.rating);
+      });
       toast.success("Partner aggiornato");
       setEditingPartner(null);
     } catch {
@@ -417,26 +420,28 @@ export default function PartnersPage() {
                 )}
 
                 {/* Contact and cost */}
-                <div className="text-xs text-muted-foreground space-y-1 pt-1">
-                  {partner.costoPerKm && (
-                    <p className="flex items-center gap-1">
-                      <Euro className="h-3 w-3" />
-                      {partner.costoPerKm.toFixed(2)} EUR/km
-                    </p>
-                  )}
-                  {partner.telefono && (
-                    <p className="flex items-center gap-1">
-                      <Phone className="h-3 w-3" />
-                      {partner.telefono}
-                    </p>
-                  )}
-                  {partner.email && (
-                    <p className="flex items-center gap-1">
-                      <Mail className="h-3 w-3" />
-                      {partner.email}
-                    </p>
-                  )}
-                </div>
+                {(partner.costoPerKm || partner.telefono || partner.email) && (
+                  <div className="text-xs text-muted-foreground space-y-1 pt-1">
+                    {partner.costoPerKm && (
+                      <p className="flex items-center gap-1">
+                        <Euro className="h-3 w-3" />
+                        {partner.costoPerKm.toFixed(2)} EUR/km
+                      </p>
+                    )}
+                    {partner.telefono && (
+                      <p className="flex items-center gap-1">
+                        <Phone className="h-3 w-3" />
+                        {partner.telefono}
+                      </p>
+                    )}
+                    {partner.email && (
+                      <p className="flex items-center gap-1">
+                        <Mail className="h-3 w-3" />
+                        {partner.email}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Notes */}
                 {partner.noteCollaborazione && (
