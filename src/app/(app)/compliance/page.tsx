@@ -25,7 +25,6 @@ import {
   TrendingDown,
   TrendingUp,
   RefreshCw,
-  ChevronRight,
   ArrowRight,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -480,38 +479,65 @@ export default function CompliancePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Clock className="h-5 w-5" />
-                Scadenze Normative 2025-2026
+                Scadenzario Normativo 2026
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {SCADENZE_NORMATIVE.map((s, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg border border-border">
-                    <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                      s.urgenza === "alta" ? "bg-red-400" :
-                      s.urgenza === "media" ? "bg-yellow-400" : "bg-blue-400"
-                    }`} />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium">{s.titolo}</h4>
-                        <Badge variant="outline" className="text-xs">{s.data}</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">{s.descrizione}</p>
-                      {s.sanzione && (
-                        <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
-                          <AlertTriangle className="h-3 w-3" />
-                          {s.sanzione}
-                        </p>
-                      )}
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-1" />
-                  </div>
+                {/* Scadenze in arrivo */}
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Scadenze in arrivo
+                </p>
+                {SCADENZE_2026.map((s, i) => (
+                  <ScadenzaRow key={`2026-${i}`} s={s} />
+                ))}
+
+                <Separator className="my-2" />
+
+                {/* Norme già in vigore */}
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Norme in vigore
+                </p>
+                {NORME_IN_VIGORE.map((s, i) => (
+                  <ScadenzaRow key={`vigore-${i}`} s={s} />
                 ))}
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+interface ScadenzaNormativa {
+  titolo: string;
+  data: string;
+  descrizione: string;
+  sanzione: string | null;
+  urgenza: "alta" | "media" | "bassa";
+}
+
+function ScadenzaRow({ s }: { s: ScadenzaNormativa }) {
+  return (
+    <div className="flex items-start gap-3 p-3 rounded-lg border border-border">
+      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+        s.urgenza === "alta" ? "bg-red-400" :
+        s.urgenza === "media" ? "bg-yellow-400" : "bg-blue-400"
+      }`} />
+      <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-medium">{s.titolo}</h4>
+          <Badge variant="outline" className="text-xs">{s.data}</Badge>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">{s.descrizione}</p>
+        {s.sanzione && (
+          <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+            <AlertTriangle className="h-3 w-3" />
+            {s.sanzione}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -551,8 +577,7 @@ function AlertCard({ alert }: { alert: ComplianceAlert }) {
   );
 }
 
-const SCADENZE_NORMATIVE = [
-  // ── Scadenze 2026 (actionable, ordine cronologico) ──
+const SCADENZE_2026: ScadenzaNormativa[] = [
   {
     titolo: "Tachigrafo Intelligente G2V2",
     data: "1 Luglio 2026",
@@ -581,7 +606,9 @@ const SCADENZE_NORMATIVE = [
     sanzione: "Multa + possibile fermo",
     urgenza: "alta",
   },
-  // ── Norme già in vigore (obblighi correnti) ──
+];
+
+const NORME_IN_VIGORE: ScadenzaNormativa[] = [
   {
     titolo: "Permessi EKMT Digitali",
     data: "In vigore dal 1/1/2026",
