@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe, PLANS, type PlanId } from "@/lib/stripe";
+import { getCompany } from "@/lib/company";
 
 export async function POST(request: NextRequest) {
   try {
-    const { plan, email } = await request.json();
+    const { plan } = await request.json();
+    const company = await getCompany();
 
     const planData = PLANS[plan as PlanId];
     if (!planData) {
@@ -12,10 +14,15 @@ export async function POST(request: NextRequest) {
 
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
+    // Riusa il customer Stripe esistente per evitare duplicati
+    const customerParam = company.stripeCustomerId
+      ? { customer: company.stripeCustomerId }
+      : { customer_email: company.email || undefined };
+
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
-      customer_email: email || undefined,
+      ...customerParam,
       line_items: [
         {
           price_data: {

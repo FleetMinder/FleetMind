@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId, getCompany } from "@/lib/company";
+import { getCompany, getCompanyId } from "@/lib/company";
 
 export async function GET() {
   try {
-    const companyId = await getCompanyId();
     const company = await getCompany();
     const settings = await prisma.setting.findMany({
-      where: { companyId },
+      where: { companyId: company.id },
     });
 
     const settingsMap: Record<string, string> = {};
@@ -32,6 +31,9 @@ export async function PUT(request: NextRequest) {
 
     if (body.company) {
       const { nome, indirizzo, citta, cap, telefono, email } = body.company;
+      if (!nome?.trim()) {
+        return NextResponse.json({ error: "La ragione sociale è obbligatoria" }, { status: 400 });
+      }
       await prisma.company.update({
         where: { id: companyId },
         data: {

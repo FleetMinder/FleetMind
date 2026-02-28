@@ -172,8 +172,8 @@ export default function SettingsPage() {
     );
   }
 
-  const currentPlan = data.settings.piano_abbonamento || null;
   const subStatus = data.company.subscriptionStatus;
+  const currentPlan = (subStatus !== "canceled" && data.settings.piano_abbonamento) ? data.settings.piano_abbonamento : null;
   const subStatusInfo = subStatus ? STATUS_LABELS[subStatus] : null;
   const periodEnd = data.company.subscriptionCurrentPeriodEnd
     ? new Date(data.company.subscriptionCurrentPeriodEnd).toLocaleDateString("it-IT")
