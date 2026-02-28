@@ -64,6 +64,8 @@ export async function GET() {
           OR: [
             { patenteScadenza: { lt: new Date() } },
             { cqcScadenza: { lt: new Date() } },
+            { tachigrafoScadenza: { lt: new Date() } },
+            { adrScadenza: { lt: new Date() } },
           ],
         },
       }),

@@ -148,6 +148,8 @@ export default function DriversPage() {
                 tachigrafoScadenza: body.tachigrafoScadenza as string,
                 cartaCQC: body.cartaCQC as string | null,
                 cqcScadenza: body.cqcScadenza as string | null,
+                adrPatentino: body.adrPatentino as string | null,
+                adrScadenza: body.adrScadenza as string | null,
                 telefono: body.telefono as string | null,
               }
             : d
@@ -474,6 +476,20 @@ export default function DriversPage() {
                     Tachigrafo:{" "}
                     {format(new Date(driver.tachigrafoScadenza), "dd/MM/yyyy")}
                   </p>
+                  {driver.cqcScadenza && (
+                    <p className="flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      CQC:{" "}
+                      {format(new Date(driver.cqcScadenza), "dd/MM/yyyy")}
+                    </p>
+                  )}
+                  {driver.adrPatentino && driver.adrScadenza && (
+                    <p className="flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" />
+                      ADR:{" "}
+                      {format(new Date(driver.adrScadenza), "dd/MM/yyyy")}
+                    </p>
+                  )}
                   {driver.trips.length > 0 && (
                     <p className="flex items-center gap-1 text-primary">
                       <MapPin className="h-3 w-3" />
