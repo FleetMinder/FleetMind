@@ -149,6 +149,7 @@ export default function SettingsPage() {
         body: JSON.stringify({ plan: planId, email: data?.company?.email }),
       });
       const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "Errore nel checkout");
       if (d.url) window.location.href = d.url;
     } catch {
       toast.error("Errore nel reindirizzamento al checkout");
@@ -162,7 +163,7 @@ export default function SettingsPage() {
       <div>
         <PageHeader title="Impostazioni" description="Configurazione account e integrazioni" />
         <div className="animate-pulse space-y-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
               <CardContent className="h-48" />
             </Card>

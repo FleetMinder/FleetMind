@@ -49,40 +49,54 @@ export async function POST(request: NextRequest) {
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const customerEmail = session.customer_email;
+  const customerId = session.customer as string;
   const plan = session.metadata?.plan || "professional";
   const subscriptionId = session.subscription as string;
-  const customerId = session.customer as string;
 
-  // Trova l'utente tramite email
-  if (customerEmail) {
-    const user = await prisma.user.findUnique({ where: { email: customerEmail } });
-    if (user?.companyId) {
-      await prisma.company.update({
-        where: { id: user.companyId },
-        data: {
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: subscriptionId,
-          subscriptionStatus: "trialing",
-          // subscriptionCurrentPeriodEnd arriva dal subscription.updated event
-        },
-      });
-
-      // Aggiorna anche il Setting piano_abbonamento
-      await prisma.setting.upsert({
-        where: { companyId_chiave: { companyId: user.companyId, chiave: "piano_abbonamento" } },
-        create: { companyId: user.companyId, chiave: "piano_abbonamento", valore: plan },
-        update: { valore: plan },
-      });
-
-      await prisma.activityLog.create({
-        data: {
-          companyId: user.companyId,
-          tipo: "subscription_started",
-          messaggio: `Abbonamento ${plan} attivato`,
-        },
-      });
-    }
+  // Prima cerca per customerId (customer esistente — customer_email non viene popolato)
+  let companyId: string | null = null;
+  if (customerId) {
+    const existing = await prisma.company.findFirst({
+      where: { stripeCustomerId: customerId },
+      select: { id: true },
+    });
+    if (existing) companyId = existing.id;
   }
+
+  // Fallback: cerca per email (primo acquisto — customer_email è presente)
+  if (!companyId && customerEmail) {
+    const user = await prisma.user.findUnique({
+      where: { email: customerEmail },
+      select: { companyId: true },
+    });
+    if (user?.companyId) companyId = user.companyId;
+  }
+
+  if (!companyId) return;
+
+  await prisma.company.update({
+    where: { id: companyId },
+    data: {
+      stripeCustomerId: customerId,
+      stripeSubscriptionId: subscriptionId,
+      subscriptionStatus: "trialing",
+      // subscriptionCurrentPeriodEnd arriva dal subscription.updated event
+    },
+  });
+
+  await prisma.setting.upsert({
+    where: { companyId_chiave: { companyId, chiave: "piano_abbonamento" } },
+    create: { companyId, chiave: "piano_abbonamento", valore: plan },
+    update: { valore: plan },
+  });
+
+  await prisma.activityLog.create({
+    data: {
+      companyId,
+      tipo: "subscription_started",
+      messaggio: `Abbonamento ${plan} attivato`,
+    },
+  });
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
