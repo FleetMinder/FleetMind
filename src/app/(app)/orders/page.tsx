@@ -335,7 +335,7 @@ export default function OrdersPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="mittenteCitta">Citta *</Label>
+                    <Label htmlFor="mittenteCitta">Città *</Label>
                     <Input
                       id="mittenteCitta"
                       value={form.mittenteCitta}
@@ -379,7 +379,7 @@ export default function OrdersPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="destinatarioCitta">Citta *</Label>
+                    <Label htmlFor="destinatarioCitta">Città *</Label>
                     <Input
                       id="destinatarioCitta"
                       value={form.destinatarioCitta}
@@ -781,7 +781,17 @@ export default function OrdersPage() {
                 {detailOrder.trip && (
                   <div>
                     <p className="text-xs font-medium text-muted-foreground mb-1">Tratta associata</p>
-                    <p className="font-mono text-xs">{detailOrder.trip.id}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant="outline" className="capitalize">
+                        {detailOrder.trip.stato.replace("_", " ")}
+                      </Badge>
+                      {detailOrder.trip.driver && (
+                        <span className="flex items-center gap-1.5 text-sm">
+                          <User className="h-3.5 w-3.5 text-muted-foreground" />
+                          {detailOrder.trip.driver.nome} {detailOrder.trip.driver.cognome}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
 

@@ -126,7 +126,7 @@ export default function Dashboard() {
       {session?.user?.isDemoUser && (
         <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-500/10 px-5 py-3 flex items-center justify-between gap-4">
           <p className="text-sm text-blue-300">
-            🎯 <strong>Account demo</strong> — Stai esplorando FleetMind con dati di esempio.
+            <strong>Account demo</strong> — Stai esplorando FleetMind con dati di esempio.
           </p>
           <Link
             href="/login"
