@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Truck, Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, ArrowLeft } from "lucide-react";
+import { Mail, Loader2, ArrowRight, CheckCircle2, Sparkles, ArrowLeft } from "lucide-react";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -32,42 +32,29 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-const PLAN_LABELS: Record<string, string> = {
-  starter: "Starter",
-  professional: "Professional",
-  business: "Business",
-};
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
-  const [subscriptionSuccess, setSubscriptionSuccess] = useState(false);
-  const [successPlan, setSuccessPlan] = useState("professional");
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("subscriptionSuccess") === "true") {
-      setSubscriptionSuccess(true);
-      setSuccessPlan(params.get("plan") || "professional");
+  const [justSubscribed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search).get("subscriptionSuccess") === "true";
     }
-  }, []);
+    return false;
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-
     setLoading(true);
     setError("");
-
     try {
       const result = await signIn("email", {
         email: email.trim(),
         redirect: false,
         callbackUrl: "/",
       });
-
       if (result?.error) {
         setError("Errore nell'invio del link. Riprova.");
         setLoading(false);
@@ -88,50 +75,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Subscription success banner */}
-      {subscriptionSuccess && (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 flex gap-3 items-start">
-          <div className="mt-0.5 flex-shrink-0">
-            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-          </div>
+    <div className="space-y-6">
+      {/* Subscription success */}
+      {justSubscribed && (
+        <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 flex gap-3 items-start">
+          <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-emerald-300 flex items-center gap-1.5">
-              Piano {PLAN_LABELS[successPlan]} attivato!
-              <Sparkles className="h-4 w-4" />
+            <p className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 text-sm">
+              Piano attivato! <Sparkles className="h-3.5 w-3.5" />
             </p>
-            <p className="text-sm text-emerald-300/80 mt-0.5">
-              14 giorni di trial gratuito iniziati. Accedi per iniziare a usare FleetMind.
+            <p className="text-xs text-emerald-600/80 dark:text-emerald-300/80 mt-0.5">
+              14 giorni di prova gratuita iniziati. Accedi per usare FleetMind.
             </p>
           </div>
         </div>
       )}
 
-      {/* Logo */}
-      <div className="text-center space-y-3">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 border border-primary/30">
-          <Truck className="h-8 w-8 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-display font-bold tracking-tight">FleetMind</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Il cervello della tua flotta
-          </p>
-        </div>
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold tracking-tight">
+          {justSubscribed ? "Accedi per iniziare" : "Accedi o registrati"}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {justSubscribed
+            ? "Usa la stessa email con cui ti sei iscritto."
+            : "Nessuna password — usiamo Google o un link magico sicuro."}
+        </p>
       </div>
 
-      {/* Login Card */}
-      <Card className="border-border bg-card/50 backdrop-blur">
-        <CardHeader className="pb-4">
-          <h2 className="text-lg font-semibold text-center">
-            Accedi al tuo account
-          </h2>
-          <p className="text-sm text-muted-foreground text-center">
-            Scegli come accedere a FleetMind
+      {/* Trial info badge — shown only when not just subscribed */}
+      {!justSubscribed && (
+        <div className="rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 px-4 py-3">
+          <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+            Nuovo su FleetMind?
+          </p>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mt-0.5">
+            Inserisci la tua email per accedere o creare un account. Avrai{" "}
+            <strong>14 giorni gratuiti</strong> per esplorare tutte le funzionalità —
+            nessuna carta di credito richiesta.
+          </p>
+        </div>
+      )}
+
+      {/* Card form */}
+      <Card className="border-border">
+        <CardHeader className="pb-3 pt-5">
+          <p className="text-sm font-medium text-center text-muted-foreground">
+            Scegli come accedere
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Google Login */}
+          {/* Google */}
           <Button
             type="button"
             variant="outline"
@@ -153,15 +147,13 @@ export default function LoginPage() {
               <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-card px-2 text-muted-foreground">
-                oppure
-              </span>
+              <span className="bg-card px-2 text-muted-foreground">oppure via email</span>
             </div>
           </div>
 
           {/* Magic Link */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-1.5">
               <Label htmlFor="email" className="text-sm">
                 Email aziendale
               </Label>
@@ -181,16 +173,12 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md px-3 py-2">
+              <p className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-md px-3 py-2">
                 {error}
               </p>
             )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading || googleLoading}
-            >
+            <Button type="submit" className="w-full" disabled={loading || googleLoading}>
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -207,17 +195,18 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      {/* Footer */}
-      <p className="text-center text-xs text-muted-foreground">
-        Nessuna password da ricordare. Accedi con Google o via Magic Link.
-      </p>
-
-      {/* Back to home */}
-      <div className="text-center">
-        <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+      {/* Footer links */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
           <ArrowLeft className="h-3 w-3" />
           Torna alla home
         </Link>
+        <p className="text-xs text-muted-foreground">
+          Nessuna password richiesta
+        </p>
       </div>
     </div>
   );

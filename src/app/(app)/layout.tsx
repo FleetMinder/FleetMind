@@ -8,34 +8,54 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const cookieStore = cookies();
 
   let showPaywall = false;
+  let trialDaysLeft: number | null = null;
   const isDemoUser = session?.user?.isDemoUser ?? false;
 
   if (session?.user) {
     if (isDemoUser) {
-      // Demo: accesso libero finché il cookie demo_trial (24h) è presente
+      // Demo: accesso libero finché demo_trial cookie (24h) è presente
       const demoCookie = cookieStore.get("demo_trial");
       if (!demoCookie) {
         showPaywall = true;
       }
+      // Non mostriamo countdown per demo — usiamo badge separato nel sidebar
     } else if (session.user.companyId) {
-      // Utenti normali: controlla trial e subscription
       const company = await prisma.company.findUnique({
         where: { id: session.user.companyId },
         select: { trialEndsAt: true, subscriptionStatus: true },
       });
+
       if (company) {
         const hasActiveSubscription = ["active", "trialing"].includes(
           company.subscriptionStatus || ""
         );
-        const trialExpired =
-          !company.trialEndsAt || company.trialEndsAt < new Date();
-        showPaywall = !hasActiveSubscription && trialExpired;
+
+        if (company.trialEndsAt) {
+          const msLeft = company.trialEndsAt.getTime() - Date.now();
+          const daysLeft = Math.max(0, Math.ceil(msLeft / (1000 * 60 * 60 * 24)));
+
+          if (!hasActiveSubscription) {
+            if (daysLeft === 0) {
+              showPaywall = true;
+            } else {
+              // Trial ancora attivo — mostra countdown
+              trialDaysLeft = daysLeft;
+            }
+          }
+        } else if (!hasActiveSubscription) {
+          // Nessun trial e nessun abbonamento
+          showPaywall = true;
+        }
       }
     }
   }
 
   return (
-    <AuthenticatedLayout showPaywall={showPaywall} isDemoUser={isDemoUser}>
+    <AuthenticatedLayout
+      showPaywall={showPaywall}
+      isDemoUser={isDemoUser}
+      trialDaysLeft={trialDaysLeft}
+    >
       {children}
     </AuthenticatedLayout>
   );
