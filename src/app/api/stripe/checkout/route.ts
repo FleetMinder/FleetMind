@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       },
       metadata: { plan },
       allow_promotion_codes: true,
-      success_url: `${baseUrl}/login?subscriptionSuccess=true&plan=${plan}`,
+      success_url: `${baseUrl}/?payment=success`,
       cancel_url: `${baseUrl}/landing#pricing`,
     });
 

@@ -76,6 +76,7 @@ model Company {
   telefono            String?
   email               String?
   onboardingCompleted          Boolean   @default(false)
+  trialEndsAt                  DateTime?
   stripeCustomerId             String?
   stripeSubscriptionId         String?
   subscriptionStatus           String?   // trialing, active, past_due, canceled

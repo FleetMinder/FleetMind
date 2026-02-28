@@ -403,7 +403,7 @@ export default function LandingPage() {
                 planId="starter"
                 prezzo={49}
                 desc="Fino a 10 mezzi"
-                features={["10 veicoli", "AI Dispatch", "Compliance base", "Supporto email"]}
+                features={["Fino a 10 veicoli", "AI Dispatch", "Compliance & scadenze", "Gestione ordini e partner", "Supporto via email"]}
                 onCheckout={handleCheckout}
                 loading={checkoutLoading === "starter"}
                 disabled={checkoutLoading !== null}
@@ -415,7 +415,7 @@ export default function LandingPage() {
                 planId="professional"
                 prezzo={149}
                 desc="Fino a 30 mezzi"
-                features={["30 veicoli", "AI Dispatch avanzato", "Compliance + MIT", "Google Maps routing", "Supporto prioritario"]}
+                features={["Fino a 30 veicoli", "AI Dispatch agentico", "Compliance + LEZ monitoring", "Google Maps routing", "MIT tariffe 2024", "Supporto prioritario"]}
                 evidenziato
                 onCheckout={handleCheckout}
                 loading={checkoutLoading === "professional"}
@@ -428,7 +428,7 @@ export default function LandingPage() {
                 planId="business"
                 prezzo={299}
                 desc="Fino a 100 mezzi"
-                features={["100 veicoli", "Tutto Professional +", "e-CMR digitale", "API integrazioni", "Account manager"]}
+                features={["Fino a 100 veicoli", "Tutto Professional +", "Report & analytics avanzati", "Onboarding assistito", "SLA garantito", "Account manager dedicato"]}
                 onCheckout={handleCheckout}
                 loading={checkoutLoading === "business"}
                 disabled={checkoutLoading !== null}

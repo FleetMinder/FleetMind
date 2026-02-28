@@ -10,10 +10,12 @@ export async function POST() {
     }
 
     // Se l'utente ha un'azienda, segna onboarding come completato
+    const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+
     if (session.user.companyId) {
       await prisma.company.update({
         where: { id: session.user.companyId },
-        data: { onboardingCompleted: true },
+        data: { onboardingCompleted: true, trialEndsAt },
       });
       return NextResponse.json({ success: true });
     }
@@ -27,6 +29,7 @@ export async function POST() {
         cap: "00000",
         piva: `TEMP-${Date.now()}`,
         onboardingCompleted: true,
+        trialEndsAt,
         users: {
           connect: { id: session.user.id },
         },
