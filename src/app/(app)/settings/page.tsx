@@ -16,6 +16,9 @@ import {
   CheckCircle2,
   Fuel,
   ExternalLink,
+  Key,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 interface Company {
@@ -88,6 +91,8 @@ export default function SettingsPage() {
   // Form state
   const [companyForm, setCompanyForm] = useState<Partial<Company>>({});
   const [costoCarburante, setCostoCarburante] = useState("1.85");
+  const [anthropicKey, setAnthropicKey] = useState("");
+  const [showApiKey, setShowApiKey] = useState(false);
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
@@ -95,12 +100,17 @@ export default function SettingsPage() {
         setData(data);
         setCompanyForm(data.company);
         setCostoCarburante(data.settings.costo_carburante_litro || "1.85");
+        setAnthropicKey(data.settings.anthropic_api_key || "");
       })
       .catch(() => toast.error("Errore nel caricamento delle impostazioni"))
       .finally(() => setLoading(false));
   }, []);
 
   const handleSave = async () => {
+    if (!companyForm.nome?.trim()) {
+      toast.error("La ragione sociale è obbligatoria");
+      return;
+    }
     setSaving(true);
     try {
       const res = await fetch("/api/settings", {
@@ -117,6 +127,7 @@ export default function SettingsPage() {
           },
           settings: {
             costo_carburante_litro: costoCarburante,
+            anthropic_api_key: anthropicKey,
           },
         }),
       });
@@ -135,7 +146,7 @@ export default function SettingsPage() {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planId }),
+        body: JSON.stringify({ plan: planId, email: data?.company?.email }),
       });
       const d = await res.json();
       if (d.url) window.location.href = d.url;
@@ -161,7 +172,7 @@ export default function SettingsPage() {
     );
   }
 
-  const currentPlan = data.settings.piano_abbonamento || "professional";
+  const currentPlan = data.settings.piano_abbonamento || null;
   const subStatus = data.company.subscriptionStatus;
   const subStatusInfo = subStatus ? STATUS_LABELS[subStatus] : null;
   const periodEnd = data.company.subscriptionCurrentPeriodEnd
@@ -293,6 +304,43 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Anthropic API Key */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5" />
+              Integrazione AI
+            </CardTitle>
+            <CardDescription>Chiave API Anthropic per l&apos;AI Dispatch agentico</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div>
+              <Label htmlFor="anthropicKey">Anthropic API Key</Label>
+              <div className="relative mt-1 max-w-md">
+                <Input
+                  id="anthropicKey"
+                  type={showApiKey ? "text" : "password"}
+                  value={anthropicKey}
+                  onChange={(e) => setAnthropicKey(e.target.value)}
+                  placeholder="sk-ant-..."
+                  className="pr-10 font-mono text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey((v) => !v)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                >
+                  {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Necessaria per le funzioni AI Dispatch. Salvata in modo sicuro e usata solo lato server.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Subscription plan */}
         <Card>
           <CardHeader>
@@ -311,7 +359,7 @@ export default function SettingsPage() {
                   </span>
                   {periodEnd && (
                     <span className="text-[11px] text-muted-foreground">
-                      {subStatus === "canceled" ? "Scaduto il" : "Rinnovo il"} {periodEnd}
+                      {subStatus === "canceled" ? "Scaduto il" : subStatus === "trialing" ? "Trial scade il" : "Rinnovo il"} {periodEnd}
                     </span>
                   )}
                 </div>

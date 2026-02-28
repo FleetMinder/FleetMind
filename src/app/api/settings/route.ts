@@ -31,14 +31,24 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
 
     if (body.company) {
+      const { nome, indirizzo, citta, cap, telefono, email } = body.company;
       await prisma.company.update({
         where: { id: companyId },
-        data: body.company,
+        data: {
+          nome,
+          indirizzo,
+          citta,
+          cap,
+          telefono: telefono || null,
+          email: email || null,
+        },
       });
     }
 
     if (body.settings) {
+      const ALLOWED_KEYS = new Set(["costo_carburante_litro", "anthropic_api_key"]);
       for (const [chiave, valore] of Object.entries(body.settings)) {
+        if (!ALLOWED_KEYS.has(chiave)) continue;
         await prisma.setting.upsert({
           where: { companyId_chiave: { companyId, chiave } },
           create: { companyId, chiave, valore: String(valore) },

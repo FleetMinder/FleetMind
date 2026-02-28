@@ -85,12 +85,13 @@ export function StepDriver({ onComplete, onSkip }: Props) {
               <select
                 name="patenteTipo"
                 id="patenteTipo"
+                defaultValue="CE"
                 className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                 required
               >
                 <option value="B">B</option>
                 <option value="C">C</option>
-                <option value="CE" selected>CE</option>
+                <option value="CE">CE</option>
                 <option value="C1">C1</option>
                 <option value="C1E">C1E</option>
               </select>
