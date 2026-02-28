@@ -217,6 +217,8 @@ export default function VehiclesPage() {
       prossimaRevisione: form.get("prossimaRevisione") || null,
       assicurazioneScadenza: form.get("assicurazioneScadenza") || null,
       bolloScadenza: form.get("bolloScadenza") || null,
+      adrAbilitato: form.get("adrAbilitato") === "true",
+      adrScadenza: form.get("adrScadenza") || null,
     };
 
     try {
@@ -360,6 +362,19 @@ export default function VehiclesPage() {
                 <div>
                   <Label htmlFor="bolloScadenza">Scadenza Bollo</Label>
                   <Input id="bolloScadenza" name="bolloScadenza" type="date" />
+                </div>
+              </div>
+                      <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="adrAbilitato">ADR Abilitato</Label>
+                  <select name="adrAbilitato" id="adrAbilitato" className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
+                    <option value="false">No</option>
+                    <option value="true">Sì</option>
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="adrScadenza">Scadenza Certificato ADR</Label>
+                  <Input id="adrScadenza" name="adrScadenza" type="date" />
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={saving}>
@@ -509,10 +524,10 @@ export default function VehiclesPage() {
                       Bollo: {format(new Date(v.bolloScadenza), "dd/MM/yyyy")}
                     </p>
                   )}
-                  {v.adrAbilitato && v.adrScadenza && (
+                  {v.adrAbilitato && (
                     <p className="flex items-center gap-1">
                       <Flame className="h-3 w-3" />
-                      ADR: {format(new Date(v.adrScadenza), "dd/MM/yyyy")}
+                      ADR: {v.adrScadenza ? format(new Date(v.adrScadenza), "dd/MM/yyyy") : "cert. non specificato"}
                     </p>
                   )}
                   {v.trips.length > 0 && (

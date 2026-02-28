@@ -47,6 +47,9 @@ export async function POST(request: NextRequest) {
         bolloScadenza: body.bolloScadenza
           ? new Date(body.bolloScadenza)
           : null,
+        adrScadenza: body.adrScadenza
+          ? new Date(body.adrScadenza)
+          : null,
       },
     });
 
