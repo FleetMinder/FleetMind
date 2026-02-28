@@ -140,14 +140,10 @@ export default function DispatchPage() {
         break;
 
       case "unassignable":
-        setUnassignables((u) => [
-          ...u,
-          {
-            orderId: event.orderId,
-            codiceOrdine: event.codiceOrdine,
-            motivo: event.motivo,
-          },
-        ]);
+        setUnassignables((u) => {
+          if (u.some((item) => item.orderId === event.orderId)) return u;
+          return [...u, { orderId: event.orderId, codiceOrdine: event.codiceOrdine, motivo: event.motivo }];
+        });
         setProgress((p) => [
           ...p,
           {
