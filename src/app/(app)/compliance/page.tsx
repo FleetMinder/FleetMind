@@ -597,8 +597,8 @@ const SCADENZE_NORMATIVE = [
   {
     titolo: "Tempi Carico/Scarico — Max 90 minuti",
     data: "In vigore",
-    descrizione: "Limite massimo di 90 minuti per le operazioni di carico e scarico (DL 73/2025). Indennizzo minimo €100 al vettore in caso di superamento.",
-    sanzione: "Indennizzo min €100 al vettore",
+    descrizione: "Limite massimo di 90 minuti per le operazioni di carico e scarico (DL 73/2025). Superato il limite: indennizzo minimo €100/ora (o frazione) dovuto al vettore. Prova dell'orario di arrivo tramite geolocalizzazione certificata o tachigrafo.",
+    sanzione: "Indennizzo min €100/h al vettore",
     urgenza: "media",
   },
   {
