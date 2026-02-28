@@ -83,13 +83,15 @@ model Company {
   createdAt                    DateTime  @default(now())
   updatedAt                    DateTime  @updatedAt
 
-  users    User[]
-  drivers  Driver[]
-  vehicles Vehicle[]
-  orders   Order[]
-  trips    Trip[]
-  partners Partner[]
-  settings Setting[]
+  users       User[]
+  drivers     Driver[]
+  vehicles    Vehicle[]
+  orders      Order[]
+  trips       Trip[]
+  partners    Partner[]
+  settings    Setting[]
+  assignments Assignment[]
+  agentLogs   AgentLog[]
 }
 
 model Driver {
@@ -117,8 +119,9 @@ model Driver {
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
 
-  company Company @relation(fields: [companyId], references: [id])
-  trips   Trip[]
+  company     Company      @relation(fields: [companyId], references: [id])
+  trips       Trip[]
+  assignments Assignment[]
 
   @@index([companyId])
   @@index([stato])
@@ -158,6 +161,7 @@ model Vehicle {
   company      Company       @relation(fields: [companyId], references: [id])
   trips        Trip[]
   maintenances Maintenance[]
+  assignments  Assignment[]
 
   @@index([companyId])
   @@index([stato])
@@ -208,9 +212,10 @@ model Order {
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 
-  company  Company     @relation(fields: [companyId], references: [id])
-  tripId   String?
-  trip     Trip?       @relation(fields: [tripId], references: [id])
+  company     Company      @relation(fields: [companyId], references: [id])
+  tripId      String?
+  trip        Trip?        @relation(fields: [tripId], references: [id])
+  assignments Assignment[]
 
   @@index([companyId])
   @@index([stato])
@@ -338,6 +343,55 @@ model LoginLog {
   createdAt DateTime @default(now())
 
   @@index([email])
+  @@index([createdAt])
+}
+
+// ========== Agentic Dispatch Models ==========
+
+enum AssignmentStatus {
+  pending
+  approved
+  rejected
+}
+
+model Assignment {
+  id              String           @id @default(cuid())
+  companyId       String
+  orderId         String
+  driverId        String
+  vehicleId       String
+  score           Int
+  maxScore        Int
+  checks          Json             // Check[]
+  motivazione     String
+  status          AssignmentStatus @default(pending)
+  kmStimati       Float?
+  oreStimate      Float?
+  costoCarburante Float?
+  createdAt       DateTime         @default(now())
+
+  company Company @relation(fields: [companyId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+  driver  Driver  @relation(fields: [driverId], references: [id])
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([companyId])
+  @@index([status])
+}
+
+model AgentLog {
+  id         String   @id @default(cuid())
+  companyId  String
+  agentName  String
+  toolName   String
+  input      Json
+  output     Json
+  durationMs Int
+  createdAt  DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
   @@index([createdAt])
 }
 
