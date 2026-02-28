@@ -7,6 +7,11 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json();
+    if (body.prossimaRevisione) body.prossimaRevisione = new Date(body.prossimaRevisione);
+    if (body.assicurazioneScadenza) body.assicurazioneScadenza = new Date(body.assicurazioneScadenza);
+    if (body.bolloScadenza) body.bolloScadenza = new Date(body.bolloScadenza);
+    if (body.adrScadenza) body.adrScadenza = new Date(body.adrScadenza);
+
     const vehicle = await prisma.vehicle.update({
       where: { id: params.id },
       data: body,

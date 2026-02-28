@@ -46,8 +46,13 @@ import {
   Calendar,
   Fuel,
   Pencil,
+  AlertTriangle,
+  Shield,
+  FileText,
+  Flame,
+  MapPin,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 
 interface Maintenance {
   id: string;
@@ -70,7 +75,12 @@ interface Vehicle {
   consumoKmL: number | null;
   stato: string;
   kmAttuali: number;
+  classeEuro: string | null;
   prossimaRevisione: string | null;
+  assicurazioneScadenza: string | null;
+  bolloScadenza: string | null;
+  adrAbilitato: boolean;
+  adrScadenza: string | null;
   prossimaManutenzione: string | null;
   maintenances: Maintenance[];
   trips: Array<{ id: string; stato: string }>;
@@ -91,6 +101,13 @@ const vehicleTypeLabels: Record<string, string> = {
   cisterna: "Cisterna",
   pianale: "Pianale",
 };
+
+function getExpiryAlert(dateStr: string): { type: "danger" | "warning" | null; days: number } {
+  const days = differenceInDays(new Date(dateStr), new Date());
+  if (days <= 0) return { type: "danger", days };
+  if (days <= 30) return { type: "warning", days };
+  return { type: null, days };
+}
 
 const statoBadge: Record<string, { label: string; className: string }> = {
   disponibile: { label: "Disponibile", className: "bg-green-500/20 text-green-400 border-green-500/30" },
@@ -139,6 +156,11 @@ export default function VehiclesPage() {
       capacitaVolumeM3: parseFloat(form.get("capacitaVolumeM3") as string),
       consumoKmL: form.get("consumoKmL") ? parseFloat(form.get("consumoKmL") as string) : null,
       prossimaRevisione: (form.get("prossimaRevisione") as string) || null,
+      classeEuro: (form.get("classeEuro") as string) || null,
+      assicurazioneScadenza: (form.get("assicurazioneScadenza") as string) || null,
+      bolloScadenza: (form.get("bolloScadenza") as string) || null,
+      adrAbilitato: form.get("adrAbilitato") === "true",
+      adrScadenza: (form.get("adrScadenza") as string) || null,
     };
     try {
       const res = await fetch(`/api/vehicles/${editingVehicle.id}`, {
@@ -213,6 +235,31 @@ export default function VehiclesPage() {
       setSaving(false);
     }
   };
+
+  const vehicleExpiryAlerts = vehicles.flatMap((v) => {
+    const alerts: Array<{ vehicle: string; tipo: string; days: number; type: "danger" | "warning" }> = [];
+    if (v.prossimaRevisione) {
+      const a = getExpiryAlert(v.prossimaRevisione);
+      if (a.type) alerts.push({ vehicle: v.targa, tipo: "Revisione", days: a.days, type: a.type });
+    }
+    if (v.assicurazioneScadenza) {
+      const a = getExpiryAlert(v.assicurazioneScadenza);
+      if (a.type) alerts.push({ vehicle: v.targa, tipo: "Assicurazione", days: a.days, type: a.type });
+    }
+    if (v.bolloScadenza) {
+      const a = getExpiryAlert(v.bolloScadenza);
+      if (a.type) alerts.push({ vehicle: v.targa, tipo: "Bollo", days: a.days, type: a.type });
+    }
+    if (v.adrAbilitato && v.adrScadenza) {
+      const a = getExpiryAlert(v.adrScadenza);
+      if (a.type) alerts.push({ vehicle: v.targa, tipo: "Certificato ADR", days: a.days, type: a.type });
+    }
+    return alerts;
+  }).sort((a, b) => {
+    if (a.type === "danger" && b.type !== "danger") return -1;
+    if (a.type !== "danger" && b.type === "danger") return 1;
+    return a.days - b.days;
+  });
 
   if (loading) {
     return (
@@ -323,6 +370,35 @@ export default function VehiclesPage() {
         </Dialog>
       </PageHeader>
 
+      {/* Expiry alerts */}
+      {vehicleExpiryAlerts.length > 0 && (
+        <div className="mb-6 space-y-2">
+          {vehicleExpiryAlerts.map((alert, i) => (
+            <div
+              key={i}
+              className={`flex items-center gap-3 p-3 rounded-lg border ${
+                alert.type === "danger"
+                  ? "bg-red-500/10 border-red-500/30"
+                  : "bg-yellow-500/10 border-yellow-500/30"
+              }`}
+            >
+              <AlertTriangle
+                className={`h-4 w-4 flex-shrink-0 ${
+                  alert.type === "danger" ? "text-red-400" : "text-yellow-400"
+                }`}
+              />
+              <p className="text-sm">
+                <span className="font-medium">{alert.vehicle}</span> —{" "}
+                {alert.tipo}:{" "}
+                {alert.days <= 0
+                  ? "scadenza superata"
+                  : `scade tra ${alert.days} giorni`}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Empty state */}
       {vehicles.length === 0 && (
         <EmptyState
@@ -349,9 +425,14 @@ export default function VehiclesPage() {
                     </div>
                     <div>
                       <CardTitle className="text-base">{v.targa}</CardTitle>
-                      <p className="text-xs text-muted-foreground">
-                        {vehicleTypeLabels[v.tipo]} - {v.marca} {v.modello}
-                      </p>
+                      <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                        <p className="text-xs text-muted-foreground">
+                          {vehicleTypeLabels[v.tipo]} · {v.marca} {v.modello}
+                        </p>
+                        {v.classeEuro && (
+                          <Badge variant="outline" className="text-[10px] py-0 h-4">{v.classeEuro}</Badge>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -409,12 +490,38 @@ export default function VehiclesPage() {
                     </p>
                   )}
                 </div>
-                {v.prossimaRevisione && (
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    Revisione: {format(new Date(v.prossimaRevisione), "dd/MM/yyyy")}
-                  </p>
-                )}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  {v.prossimaRevisione && (
+                    <p className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      Revisione: {format(new Date(v.prossimaRevisione), "dd/MM/yyyy")}
+                    </p>
+                  )}
+                  {v.assicurazioneScadenza && (
+                    <p className="flex items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      Assicurazione: {format(new Date(v.assicurazioneScadenza), "dd/MM/yyyy")}
+                    </p>
+                  )}
+                  {v.bolloScadenza && (
+                    <p className="flex items-center gap-1">
+                      <FileText className="h-3 w-3" />
+                      Bollo: {format(new Date(v.bolloScadenza), "dd/MM/yyyy")}
+                    </p>
+                  )}
+                  {v.adrAbilitato && v.adrScadenza && (
+                    <p className="flex items-center gap-1">
+                      <Flame className="h-3 w-3" />
+                      ADR: {format(new Date(v.adrScadenza), "dd/MM/yyyy")}
+                    </p>
+                  )}
+                  {v.trips.length > 0 && (
+                    <p className="flex items-center gap-1 text-primary">
+                      <MapPin className="h-3 w-3" />
+                      {v.trips.length === 1 ? "1 tratta attiva" : `${v.trips.length} tratte attive`}
+                    </p>
+                  )}
+                </div>
                 {v.maintenances.length > 0 && (
                   <Button
                     variant="ghost"
@@ -423,7 +530,7 @@ export default function VehiclesPage() {
                     onClick={() => setDetailVehicle(v)}
                   >
                     <Wrench className="h-3 w-3 mr-1" />
-                    {v.maintenances.length} manutenzioni registrate
+                    {v.maintenances.length === 1 ? "1 manutenzione registrata" : `${v.maintenances.length} manutenzioni registrate`}
                   </Button>
                 )}
               </CardContent>
@@ -535,6 +642,43 @@ export default function VehiclesPage() {
                   <Input id="edit-prossimaRevisione" name="prossimaRevisione" type="date"
                     defaultValue={editingVehicle.prossimaRevisione?.split("T")[0] || ""} />
                 </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-assicurazioneScadenza">Scadenza Assicurazione</Label>
+                  <Input id="edit-assicurazioneScadenza" name="assicurazioneScadenza" type="date"
+                    defaultValue={editingVehicle.assicurazioneScadenza?.split("T")[0] || ""} />
+                </div>
+                <div>
+                  <Label htmlFor="edit-bolloScadenza">Scadenza Bollo</Label>
+                  <Input id="edit-bolloScadenza" name="bolloScadenza" type="date"
+                    defaultValue={editingVehicle.bolloScadenza?.split("T")[0] || ""} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="edit-classeEuro">Classe Euro</Label>
+                  <select name="classeEuro" id="edit-classeEuro" defaultValue={editingVehicle.classeEuro || ""} className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
+                    <option value="">Non specificata</option>
+                    <option value="Euro 3">Euro 3</option>
+                    <option value="Euro 4">Euro 4</option>
+                    <option value="Euro 5">Euro 5</option>
+                    <option value="Euro 6">Euro 6</option>
+                    <option value="Euro 6E">Euro 6E</option>
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="edit-adrAbilitato">ADR Abilitato</Label>
+                  <select name="adrAbilitato" id="edit-adrAbilitato" defaultValue={editingVehicle.adrAbilitato ? "true" : "false"} className="w-full h-10 rounded-md border border-input bg-background text-foreground px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring">
+                    <option value="false">No</option>
+                    <option value="true">Sì</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-adrScadenza">Scadenza Certificato ADR</Label>
+                <Input id="edit-adrScadenza" name="adrScadenza" type="date"
+                  defaultValue={editingVehicle.adrScadenza?.split("T")[0] || ""} />
               </div>
               <Button type="submit" className="w-full" disabled={editSaving}>
                 {editSaving ? "Salvataggio..." : "Salva Modifiche"}

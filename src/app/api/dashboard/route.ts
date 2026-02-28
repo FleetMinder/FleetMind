@@ -72,7 +72,11 @@ export async function GET() {
       prisma.vehicle.count({
         where: {
           companyId,
-          prossimaRevisione: { lt: new Date() },
+          OR: [
+            { prossimaRevisione: { lt: new Date() } },
+            { assicurazioneScadenza: { lt: new Date() } },
+            { bolloScadenza: { lt: new Date() } },
+          ],
         },
       }),
       prisma.trip.findMany({
