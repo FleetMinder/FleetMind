@@ -73,7 +73,7 @@ function checkScadenza(
       entitaTipo,
       entitaId,
       entitaNome,
-      messaggio: `${labelScadenza} SCADUTA per ${entitaNome}. Intervenire immediatamente.`,
+      messaggio: `${labelScadenza} di ${entitaNome}: scadenza superata. Intervenire immediatamente.`,
       dataScadenza,
     };
   }

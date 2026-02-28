@@ -552,19 +552,20 @@ function AlertCard({ alert }: { alert: ComplianceAlert }) {
 }
 
 const SCADENZE_NORMATIVE = [
+  // ── Scadenze 2026 (actionable, ordine cronologico) ──
   {
     titolo: "Tachigrafo Intelligente G2V2",
     data: "1 Luglio 2026",
-    descrizione: "Obbligo per veicoli >2,5t in trasporto internazionale di installare il tachigrafo intelligente di seconda generazione.",
+    descrizione: "Obbligo per veicoli >2,5t in trasporto internazionale di installare il tachigrafo intelligente di seconda generazione (Reg. UE 1054/2020).",
     sanzione: "Fermo del veicolo",
     urgenza: "alta",
   },
   {
-    titolo: "Divieto Euro 5 Diesel — Nord Italia",
-    data: "Ottobre 2026",
-    descrizione: "Divieto di circolazione per veicoli Euro 5 diesel nei comuni >100.000 abitanti di Lombardia, Piemonte, Emilia-Romagna e Veneto.",
-    sanzione: "Multa + possibile fermo",
-    urgenza: "alta",
+    titolo: "AEB (Frenata Automatica d'Emergenza)",
+    data: "7 Luglio 2026",
+    descrizione: "Obbligo di sistemi AEB per camion di nuova produzione (GSR Regulation). Si affianca all'obbligo di Event Data Recorder (scatola nera).",
+    sanzione: "Divieto di immatricolazione",
+    urgenza: "media",
   },
   {
     titolo: "ADR — Nuova Classificazione Violazioni",
@@ -574,23 +575,17 @@ const SCADENZE_NORMATIVE = [
     urgenza: "alta",
   },
   {
-    titolo: "AEB (Frenata Automatica d'Emergenza)",
-    data: "7 Luglio 2026",
-    descrizione: "Obbligo di sistemi AEB per camion di nuova produzione.",
-    sanzione: "Divieto di immatricolazione",
-    urgenza: "media",
+    titolo: "Divieto Euro 5 Diesel — Nord Italia",
+    data: "1 Ottobre 2026",
+    descrizione: "Divieto di circolazione per veicoli Euro 5 diesel nei comuni >100.000 abitanti di Lombardia, Piemonte, Emilia-Romagna e Veneto. Posticipato da ottobre 2025.",
+    sanzione: "Multa + possibile fermo",
+    urgenza: "alta",
   },
-  {
-    titolo: "e-CMR — Lettera di Vettura Elettronica",
-    data: "Ratificata 2024",
-    descrizione: "L'Italia ha ratificato il protocollo e-CMR ad agosto 2024. Facoltativa ma destinata a diventare standard. Validità legale equivalente alla versione cartacea.",
-    sanzione: null,
-    urgenza: "bassa",
-  },
+  // ── Norme già in vigore (obblighi correnti) ──
   {
     titolo: "Permessi EKMT Digitali",
-    data: "1 Gennaio 2026",
-    descrizione: "I permessi e carnet EKMT saranno rilasciati solo in formato elettronico per il traffico extra-UE/EFTA.",
+    data: "In vigore dal 1/1/2026",
+    descrizione: "I permessi e carnet EKMT sono rilasciati esclusivamente in formato elettronico per il traffico extra-UE/EFTA. I permessi cartacei non sono più validi.",
     sanzione: "Impossibilità di trasporto extra-UE",
     urgenza: "media",
   },
@@ -602,6 +597,13 @@ const SCADENZE_NORMATIVE = [
     urgenza: "media",
   },
   {
+    titolo: "Scarico Dati Tachigrafo",
+    data: "Obbligo continuo",
+    descrizione: "Scarico carta conducente ogni 28 giorni. Scarico memoria di massa del tachigrafo ogni 90 giorni. Conservazione dati per almeno 12 mesi.",
+    sanzione: "Fino a €6.000 + fermo veicolo",
+    urgenza: "media",
+  },
+  {
     titolo: "Costi Minimi MIT — Aggiornamento Trimestrale",
     data: "Trimestrale",
     descrizione: "I valori di riferimento dei costi di esercizio vengono aggiornati trimestralmente dal MIT. Le tariffe non devono scendere sotto questi valori.",
@@ -609,10 +611,10 @@ const SCADENZE_NORMATIVE = [
     urgenza: "media",
   },
   {
-    titolo: "Scarico Dati Tachigrafo",
-    data: "Continuo",
-    descrizione: "Scarico carta conducente ogni 28 giorni. Scarico memoria di massa del tachigrafo ogni 90 giorni. Conservazione dati per almeno 12 mesi.",
-    sanzione: "Fino a €6.000 + fermo veicolo",
-    urgenza: "media",
+    titolo: "e-CMR — Lettera di Vettura Elettronica",
+    data: "Ratificata ago. 2024",
+    descrizione: "L'Italia ha ratificato il protocollo e-CMR ad agosto 2024. Facoltativa ma destinata a diventare standard. Validità legale equivalente alla versione cartacea.",
+    sanzione: null,
+    urgenza: "bassa",
   },
 ];
