@@ -5,6 +5,9 @@ import { preFilterCombinations } from "@/lib/dispatch/pre-filter";
 import { runDispatchAgent } from "@/lib/dispatch/dispatch-agent";
 import type { DispatchEvent } from "@/lib/dispatch/types";
 
+// Estende il timeout Vercel a 300s (Pro plan max) per il dispatch SSE
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
   const encoder = new TextEncoder();
 
