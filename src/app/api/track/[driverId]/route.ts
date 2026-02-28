@@ -24,8 +24,8 @@ export async function POST(
       return NextResponse.json({ error: "Coordinate non valide" }, { status: 400 });
     }
 
-    // Bounding box Italia + margine
-    if (lat < 35 || lat > 48 || lng < 5 || lng > 20) {
+    // Bounding box Europa
+    if (lat < 34 || lat > 72 || lng < -25 || lng > 45) {
       return NextResponse.json({ error: "Coordinate fuori dal range" }, { status: 400 });
     }
 
