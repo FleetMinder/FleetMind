@@ -291,7 +291,7 @@ export default function Dashboard() {
             </button>
           </CardHeader>
           <CardContent>
-            <div className="h-[400px] rounded-lg overflow-hidden">
+            <div className="h-[400px] rounded-lg overflow-hidden isolate">
               <FleetMap drivers={data.drivers} trips={data.trips} />
             </div>
             <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted-foreground">
