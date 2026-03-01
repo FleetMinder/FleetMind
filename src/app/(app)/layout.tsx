@@ -43,8 +43,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             }
           }
         } else if (!hasActiveSubscription) {
-          // Nessun trial e nessun abbonamento
-          showPaywall = true;
+          // Utente pre-esistente senza trial — auto-grant 14 giorni
+          const trialEnd = new Date();
+          trialEnd.setDate(trialEnd.getDate() + 14);
+          await prisma.company.update({
+            where: { id: session.user.companyId },
+            data: { trialEndsAt: trialEnd },
+          });
+          trialDaysLeft = 14;
         }
       }
     }

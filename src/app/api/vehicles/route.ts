@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getProtectedCompanyId } from "@/lib/company";
+import { getCompanyId, getProtectedCompanyId } from "@/lib/company";
 
 export async function GET() {
   try {
-    const companyId = await getProtectedCompanyId();
+    const companyId = await getCompanyId();
     const vehicles = await prisma.vehicle.findMany({
       where: { companyId },
       orderBy: { targa: "asc" },
@@ -21,9 +21,6 @@ export async function GET() {
     });
     return NextResponse.json(vehicles);
   } catch (error) {
-    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
-      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
-    }
     console.error("Vehicles GET error:", error);
     return NextResponse.json(
       { error: "Errore nel caricamento dei mezzi" },

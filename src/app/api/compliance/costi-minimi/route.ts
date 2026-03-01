@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProtectedCompanyId } from "@/lib/company";
+import { getCompanyId, getProtectedCompanyId } from "@/lib/company";
 import {
   calcolaCostoMinimo,
   verificaTariffa,
@@ -9,7 +9,7 @@ import {
 // GET: restituisce le tabelle costi minimi MIT
 export async function GET() {
   try {
-    await getProtectedCompanyId(); // verifica auth
+    await getCompanyId(); // verifica auth
     return NextResponse.json({
       aggiornamento: "Giugno 2025",
       decretoRiferimento: "D.D. n.279 del 5 agosto 2025",

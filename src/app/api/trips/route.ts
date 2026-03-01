@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getProtectedCompanyId } from "@/lib/company";
+import { getCompanyId } from "@/lib/company";
 
 export async function GET() {
   try {
-    const companyId = await getProtectedCompanyId();
+    const companyId = await getCompanyId();
 
     const trips = await prisma.trip.findMany({
       where: { companyId },
@@ -34,9 +34,6 @@ export async function GET() {
 
     return NextResponse.json(trips);
   } catch (error) {
-    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
-      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
-    }
     console.error("Trips API error:", error);
     return NextResponse.json(
       { error: "Errore nel caricamento dei viaggi" },

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getProtectedCompanyId } from "@/lib/company";
+import { getCompanyId } from "@/lib/company";
 
 export async function GET() {
   try {
-    const companyId = await getProtectedCompanyId();
+    const companyId = await getCompanyId();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -144,9 +144,6 @@ export async function GET() {
       },
     });
   } catch (error) {
-    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
-      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
-    }
     console.error("Dashboard API error:", error);
     return NextResponse.json(
       { error: "Errore nel caricamento della dashboard" },
