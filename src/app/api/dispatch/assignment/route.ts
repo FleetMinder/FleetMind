@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 import type { Check } from "@/lib/dispatch/types";
 import type { AssignmentRow } from "@/components/dispatch/AssignmentCard";
 
 export async function GET(request: NextRequest) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get("orderId");
 

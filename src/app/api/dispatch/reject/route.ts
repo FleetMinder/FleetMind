@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 
 export async function POST(request: NextRequest) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const { assignmentId } = await request.json();
 
     if (!assignmentId) {

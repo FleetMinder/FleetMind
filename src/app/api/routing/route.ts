@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 import { calcolaRotta, calcolaRottaMultiStop, geocodifica } from "@/lib/routing";
 
 async function getGoogleMapsKey(companyId: string): Promise<string | null> {
@@ -18,7 +18,7 @@ async function getGoogleMapsKey(companyId: string): Promise<string | null> {
 // POST: calcola rotta tra punti
 export async function POST(request: NextRequest) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const apiKey = await getGoogleMapsKey(companyId);
 
     if (!apiKey) {

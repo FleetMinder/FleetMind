@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 import {
   calcolaCostoMinimo,
   verificaTariffa,
@@ -9,7 +9,7 @@ import {
 // GET: restituisce le tabelle costi minimi MIT
 export async function GET() {
   try {
-    await getCompanyId(); // verifica auth
+    await getProtectedCompanyId(); // verifica auth
     return NextResponse.json({
       aggiornamento: "Giugno 2025",
       decretoRiferimento: "D.D. n.279 del 5 agosto 2025",
@@ -27,7 +27,7 @@ export async function GET() {
 // POST: calcola costo minimo per una tratta specifica
 export async function POST(request: NextRequest) {
   try {
-    await getCompanyId(); // verifica auth
+    await getProtectedCompanyId(); // verifica auth
     const body = await request.json();
 
     const { pesoVeicoloKg, distanzaKm, tariffaProposta, durataOre } = body;

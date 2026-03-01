@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 
 export async function GET(request: NextRequest) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const searchParams = request.nextUrl.searchParams;
     const stato = searchParams.get("stato");
     const urgenza = searchParams.get("urgenza");
@@ -29,6 +29,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(orders);
   } catch (error) {
+    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
+      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
+    }
     console.error("Orders GET error:", error);
     return NextResponse.json(
       { error: "Errore nel caricamento degli ordini" },
@@ -39,7 +42,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const body = await request.json();
 
     const count = await prisma.order.count({ where: { companyId } });
@@ -67,6 +70,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
+      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
+    }
     console.error("Orders POST error:", error);
     return NextResponse.json(
       { error: "Errore nella creazione dell'ordine" },

@@ -181,27 +181,43 @@ export function PaywallOverlay({ isDemoUser = false }: Props) {
               ))}
             </div>
 
-            {/* CTA secondaria per utenti demo */}
-            {isDemoUser && (
-              <div className="mt-8 text-center border-t border-border pt-6">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Preferisci iniziare con la tua prova gratuita di 14 giorni? Nessuna carta di credito richiesta.
-                </p>
+            {/* CTA secondaria */}
+            <div className="mt-8 text-center border-t border-border pt-6">
+              {isDemoUser ? (
+                <>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Preferisci iniziare con la tua prova gratuita di 14 giorni? Nessuna carta di credito richiesta.
+                  </p>
+                  <Button
+                    variant="ghost"
+                    className="gap-2 font-medium"
+                    disabled={checkoutLoading !== null || signOutLoading}
+                    onClick={handleStartFree}
+                  >
+                    {signOutLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <ArrowRight className="h-4 w-4" />
+                    )}
+                    {signOutLoading ? "Reindirizzamento..." : "Inizia Gratis — 14 giorni"}
+                  </Button>
+                </>
+              ) : (
                 <Button
                   variant="ghost"
-                  className="gap-2 font-medium"
+                  className="gap-2 text-muted-foreground"
                   disabled={checkoutLoading !== null || signOutLoading}
-                  onClick={handleStartFree}
+                  onClick={() => { setSignOutLoading(true); signOut({ callbackUrl: "/login" }); }}
                 >
                   {signOutLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <ArrowRight className="h-4 w-4" />
                   )}
-                  {signOutLoading ? "Reindirizzamento..." : "Inizia Gratis — 14 giorni"}
+                  {signOutLoading ? "Uscita..." : "Esci dall'account"}
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
 
             <p className="text-center text-xs text-muted-foreground mt-6">
               Nessun addebito nascosto · Cancellazione in qualsiasi momento ·

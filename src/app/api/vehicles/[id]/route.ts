@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const body = await request.json();
     if (body.prossimaRevisione) body.prossimaRevisione = new Date(body.prossimaRevisione);
     if (body.assicurazioneScadenza) body.assicurazioneScadenza = new Date(body.assicurazioneScadenza);

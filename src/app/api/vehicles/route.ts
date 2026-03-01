@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 
 export async function GET() {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const vehicles = await prisma.vehicle.findMany({
       where: { companyId },
       orderBy: { targa: "asc" },
@@ -21,6 +21,9 @@ export async function GET() {
     });
     return NextResponse.json(vehicles);
   } catch (error) {
+    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
+      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
+    }
     console.error("Vehicles GET error:", error);
     return NextResponse.json(
       { error: "Errore nel caricamento dei mezzi" },
@@ -31,7 +34,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const body = await request.json();
 
     const vehicle = await prisma.vehicle.create({
@@ -55,6 +58,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(vehicle, { status: 201 });
   } catch (error) {
+    if (error instanceof Error && error.message === "TRIAL_EXPIRED") {
+      return NextResponse.json({ error: "Trial scaduto" }, { status: 403 });
+    }
     console.error("Vehicles POST error:", error);
     return NextResponse.json(
       { error: "Errore nella creazione del mezzo" },

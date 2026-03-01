@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 import { preFilterCombinations } from "@/lib/dispatch/pre-filter";
 import { runDispatchAgent } from "@/lib/dispatch/dispatch-agent";
 import type { DispatchEvent } from "@/lib/dispatch/types";
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       };
 
       try {
-        const companyId = await getCompanyId();
+        const companyId = await getProtectedCompanyId();
         const body = await request.json();
 
         // ── API keys ────────────────────────────────────────────────────────

@@ -166,3 +166,33 @@ export async function getCompany() {
   if (!company) throw new Error("Azienda non trovata");
   return company;
 }
+
+/**
+ * Come getCompanyId(), ma verifica anche che il trial sia attivo o ci sia un abbonamento.
+ * Lancia "TRIAL_EXPIRED" se il trial è scaduto senza abbonamento.
+ * Usare nelle API protette (NON in settings, checkout, webhook).
+ */
+export async function getProtectedCompanyId(): Promise<string> {
+  const session = await getSession();
+  if (!session?.user?.companyId) {
+    throw new Error("Utente non autenticato o senza azienda");
+  }
+  const companyId = session.user.companyId;
+
+  // Demo users: bypass trial check
+  if (session.user.isDemoUser) return companyId;
+
+  const company = await prisma.company.findUnique({
+    where: { id: companyId },
+    select: { trialEndsAt: true, subscriptionStatus: true },
+  });
+  if (!company) throw new Error("Azienda non trovata");
+
+  const hasActive = ["active", "trialing"].includes(company.subscriptionStatus || "");
+  if (hasActive) return companyId;
+
+  const expired = !company.trialEndsAt || company.trialEndsAt.getTime() < Date.now();
+  if (expired) throw new Error("TRIAL_EXPIRED");
+
+  return companyId;
+}

@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCompanyId } from "@/lib/company";
+import { getProtectedCompanyId } from "@/lib/company";
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     const body = await request.json();
 
     const partner = await prisma.partner.update({
@@ -29,7 +29,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const companyId = await getCompanyId();
+    const companyId = await getProtectedCompanyId();
     await prisma.partner.delete({
       where: { id: params.id, companyId },
     });
