@@ -398,6 +398,41 @@ model AgentLog {
   @@index([createdAt])
 }
 
+// ========== Regulatory Agent Models ==========
+
+model RegulatoryDeadline {
+  id              String   @id @default(cuid())
+  titolo          String
+  data            String   // "1 Luglio 2026", "In vigore", etc.
+  descrizione     String
+  sanzione        String?
+  urgenza         String   // alta, media, bassa
+  categoria       String   // scadenza, in_vigore
+  fonti           Json     // string[] — URLs o riferimenti normativi
+  riferimentoLegale String? // es. "Reg. UE 1054/2020"
+  attivo          Boolean  @default(true)
+  aggiornatoIl    DateTime @default(now())
+  verificatoIl    DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([categoria])
+  @@index([attivo])
+}
+
+model RegulatoryUpdateLog {
+  id            String   @id @default(cuid())
+  fontiUsate    Json     // string[] — URLs consultate
+  scadenzeAggiunte    Int @default(0)
+  scadenzeAggiornate  Int @default(0)
+  scadenzeRimosse     Int @default(0)
+  riepilogoAgente     String // summary dall'agente
+  durataMs      Int
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 // ========== Compliance Models ==========
 
 model ComplianceAlert {

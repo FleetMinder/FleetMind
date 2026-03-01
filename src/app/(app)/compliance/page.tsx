@@ -26,6 +26,9 @@ import {
   TrendingUp,
   RefreshCw,
   ArrowRight,
+  Bot,
+  ExternalLink,
+  Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -101,6 +104,11 @@ export default function CompliancePage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Scadenzario normativo da DB
+  const [regData, setRegData] = useState<RegulatoryData | null>(null);
+  const [agentRunning, setAgentRunning] = useState(false);
+  const [agentLog, setAgentLog] = useState<string[]>([]);
+
   // Calcolo costi minimi
   const [pesoVeicolo, setPesoVeicolo] = useState("");
   const [distanzaKm, setDistanzaKm] = useState("");
@@ -110,15 +118,20 @@ export default function CompliancePage() {
 
   const fetchCompliance = useCallback(async () => {
     try {
-      const [compRes, costiRes] = await Promise.all([
+      const [compRes, costiRes, regRes] = await Promise.all([
         fetch("/api/compliance"),
         fetch("/api/compliance/costi-minimi"),
+        fetch("/api/compliance/regulatory-update"),
       ]);
       const compData = await compRes.json();
       const costiData = await costiRes.json();
       setAlerts(compData.alerts || []);
       setStats(compData.stats || null);
       setTabelle(costiData.tabelle || []);
+      if (regRes.ok) {
+        const rd = await regRes.json();
+        if (rd.deadlines) setRegData(rd);
+      }
     } catch {
       toast.error("Errore nel caricamento compliance");
     } finally {
@@ -134,6 +147,46 @@ export default function CompliancePage() {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchCompliance();
+  };
+
+  const handleRegulatoryUpdate = async () => {
+    setAgentRunning(true);
+    setAgentLog([]);
+    try {
+      const res = await fetch("/api/compliance/regulatory-update", { method: "POST" });
+      const reader = res.body?.getReader();
+      if (!reader) return;
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const evt = JSON.parse(line.slice(6));
+            if (evt.type === "done") {
+              toast.success(`Aggiornamento completato: +${evt.aggiunte} aggiunte, ~${evt.aggiornate} aggiornate`);
+            } else if (evt.message) {
+              setAgentLog((prev) => [...prev.slice(-19), evt.message]);
+            }
+          } catch { /* ignore parse errors */ }
+        }
+      }
+      // Ricarica dati
+      const regRes = await fetch("/api/compliance/regulatory-update");
+      if (regRes.ok) {
+        const rd = await regRes.json();
+        if (rd.deadlines) setRegData(rd);
+      }
+    } catch {
+      toast.error("Errore nell'aggiornamento normativo");
+    } finally {
+      setAgentRunning(false);
+    }
   };
 
   const handleCalcola = async () => {
@@ -475,35 +528,133 @@ export default function CompliancePage() {
 
         {/* Tab: Scadenzario Normativo */}
         <TabsContent value="normativa" className="space-y-4">
+          {/* Agent update banner */}
+          <Card className="border-purple-500/20 bg-purple-500/5">
+            <CardContent className="py-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <Bot className="h-5 w-5 text-purple-400 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">Agente AI Normativo</p>
+                    <p className="text-xs text-muted-foreground">
+                      {regData?.ultimoAggiornamento
+                        ? `Ultimo aggiornamento: ${new Date(regData.ultimoAggiornamento.data).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })} — ${regData.ultimoAggiornamento.fontiUsate.filter((f) => !f.startsWith("[")).length} fonti consultate`
+                        : "Nessun aggiornamento eseguito. Avvia l'agente per popolare lo scadenzario."}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+                  disabled={agentRunning}
+                  onClick={handleRegulatoryUpdate}
+                >
+                  {agentRunning ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Bot className="h-4 w-4" />
+                  )}
+                  {agentRunning ? "Aggiornamento..." : "Aggiorna Scadenzario"}
+                </Button>
+              </div>
+
+              {/* Live agent log */}
+              {agentRunning && agentLog.length > 0 && (
+                <div className="mt-3 p-2 rounded bg-black/20 max-h-32 overflow-y-auto">
+                  {agentLog.map((msg, i) => (
+                    <p key={i} className="text-xs text-purple-300/80 font-mono">
+                      {msg}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Clock className="h-5 w-5" />
-                Scadenzario Normativo 2026
+                Scadenzario Normativo {new Date().getFullYear()}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {/* Scadenze in arrivo */}
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Scadenze in arrivo
-                </p>
-                {SCADENZE_2026.map((s, i) => (
-                  <ScadenzaRow key={`2026-${i}`} s={s} />
-                ))}
+                {(() => {
+                  const scadenze = regData?.deadlines?.filter((d) => d.categoria === "scadenza") ?? [];
+                  const inVigore = regData?.deadlines?.filter((d) => d.categoria === "in_vigore") ?? [];
+                  const useDb = scadenze.length > 0 || inVigore.length > 0;
+                  const scadenzeList = useDb ? scadenze : SCADENZE_2026;
+                  const vigoreList = useDb ? inVigore : NORME_IN_VIGORE;
 
-                <Separator className="my-2" />
+                  return (
+                    <>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Scadenze in arrivo
+                      </p>
+                      {scadenzeList.map((s, i) => (
+                        <ScadenzaRow key={`2026-${i}`} s={s} showSources={useDb} />
+                      ))}
 
-                {/* Norme già in vigore */}
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Norme in vigore
-                </p>
-                {NORME_IN_VIGORE.map((s, i) => (
-                  <ScadenzaRow key={`vigore-${i}`} s={s} />
-                ))}
+                      <Separator className="my-2" />
+
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Norme in vigore
+                      </p>
+                      {vigoreList.map((s, i) => (
+                        <ScadenzaRow key={`vigore-${i}`} s={s} showSources={useDb} />
+                      ))}
+                    </>
+                  );
+                })()}
               </div>
             </CardContent>
           </Card>
+
+          {/* Audit trail: fonti consultate */}
+          {regData?.ultimoAggiornamento && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-sm">
+                  <FileText className="h-4 w-4" />
+                  Fonti consultate dall&apos;agente
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground mb-3">
+                  {regData.ultimoAggiornamento.riepilogo.slice(0, 300)}
+                  {regData.ultimoAggiornamento.riepilogo.length > 300 && "..."}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {regData.ultimoAggiornamento.fontiUsate
+                    .filter((f) => f.startsWith("http"))
+                    .slice(0, 10)
+                    .map((url, i) => {
+                      const domain = new URL(url).hostname.replace("www.", "");
+                      return (
+                        <a
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 bg-blue-500/10 px-2 py-1 rounded"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          {domain}
+                        </a>
+                      );
+                    })}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Durata analisi: {(regData.ultimoAggiornamento.durataMs / 1000).toFixed(1)}s —
+                  +{regData.ultimoAggiornamento.aggiunte} aggiunte,
+                  ~{regData.ultimoAggiornamento.aggiornate} aggiornate,
+                  -{regData.ultimoAggiornamento.rimosse} rimosse
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
@@ -516,9 +667,26 @@ interface ScadenzaNormativa {
   descrizione: string;
   sanzione: string | null;
   urgenza: "alta" | "media" | "bassa";
+  categoria?: string;
+  fonti?: string[];
+  riferimentoLegale?: string | null;
+  aggiornatoIl?: string;
 }
 
-function ScadenzaRow({ s }: { s: ScadenzaNormativa }) {
+interface RegulatoryData {
+  deadlines: ScadenzaNormativa[];
+  ultimoAggiornamento: {
+    data: string;
+    aggiunte: number;
+    aggiornate: number;
+    rimosse: number;
+    fontiUsate: string[];
+    riepilogo: string;
+    durataMs: number;
+  } | null;
+}
+
+function ScadenzaRow({ s, showSources = false }: { s: ScadenzaNormativa; showSources?: boolean }) {
   return (
     <div className="flex items-start gap-3 p-3 rounded-lg border border-border">
       <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
@@ -528,7 +696,14 @@ function ScadenzaRow({ s }: { s: ScadenzaNormativa }) {
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-medium">{s.titolo}</h4>
-          <Badge variant="outline" className="text-xs">{s.data}</Badge>
+          <div className="flex items-center gap-2">
+            {showSources && s.riferimentoLegale && (
+              <Badge variant="outline" className="text-[10px] text-purple-400 border-purple-500/30">
+                {s.riferimentoLegale}
+              </Badge>
+            )}
+            <Badge variant="outline" className="text-xs">{s.data}</Badge>
+          </div>
         </div>
         <p className="text-xs text-muted-foreground mt-1">{s.descrizione}</p>
         {s.sanzione && (
@@ -536,6 +711,28 @@ function ScadenzaRow({ s }: { s: ScadenzaNormativa }) {
             <AlertTriangle className="h-3 w-3" />
             {s.sanzione}
           </p>
+        )}
+        {showSources && s.fonti && s.fonti.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {s.fonti.map((fonte, i) =>
+              fonte.startsWith("http") ? (
+                <a
+                  key={i}
+                  href={fonte}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-blue-400/70 hover:text-blue-300 flex items-center gap-0.5"
+                >
+                  <ExternalLink className="h-2.5 w-2.5" />
+                  {new URL(fonte).hostname.replace("www.", "")}
+                </a>
+              ) : (
+                <span key={i} className="text-[10px] text-muted-foreground">
+                  {fonte}
+                </span>
+              )
+            )}
+          </div>
         )}
       </div>
     </div>
