@@ -677,7 +677,9 @@ async function main() {
     },
   ];
 
-  // Clear old orders and trips for this company
+  // Clear old assignments, agent logs, orders, and trips for this company
+  await prisma.assignment.deleteMany({ where: { companyId: company.id } });
+  await prisma.agentLog.deleteMany({ where: { companyId: company.id } });
   await prisma.order.deleteMany({ where: { companyId: company.id } });
   await prisma.trip.deleteMany({ where: { companyId: company.id } });
 
