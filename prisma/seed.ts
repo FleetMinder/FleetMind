@@ -85,8 +85,8 @@ async function main() {
       oreRiposoRimanenti: 11,
       stato: "in_viaggio" as const,
       telefono: "+39 333 1842590",
-      latitudine: 41.49,
-      longitudine: 13.83,
+      latitudine: 42.56,
+      longitudine: 12.65,
     },
     {
       nome: "Luca",
@@ -106,8 +106,8 @@ async function main() {
       oreRiposoRimanenti: 9,
       stato: "in_viaggio" as const,
       telefono: "+39 340 5928471",
-      latitudine: 42.85,
-      longitudine: 12.57,
+      latitudine: 43.77,
+      longitudine: 11.25,
     },
     {
       nome: "Giuseppe",
