@@ -10,6 +10,7 @@ import {
   Package,
   Brain,
   Users,
+  UserPlus,
   Truck,
   Handshake,
   Settings,
@@ -38,6 +39,7 @@ const navigation = [
   { name: "Autisti", href: "/drivers", icon: Users },
   { name: "Mezzi", href: "/vehicles", icon: Truck },
   { name: "Partner", href: "/partners", icon: Handshake },
+  { name: "Team", href: "/team", icon: UserPlus },
   { name: "Impostazioni", href: "/settings", icon: Settings },
 ];
 
