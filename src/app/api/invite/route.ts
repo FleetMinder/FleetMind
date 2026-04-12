@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getProtectedCompanyId } from "@/lib/company";
 import crypto from "crypto";
 
-// GET — fetch existing invite code for the company
+// GET — get invite code + team members
 export async function GET() {
   try {
     const companyId = await getProtectedCompanyId();
@@ -58,7 +58,7 @@ export async function POST() {
   }
 }
 
-// Join endpoint — validates invite code and links user to company
+// PUT — join: validate invite + pre-create or link user
 export async function PUT(request: NextRequest) {
   try {
     const { code, email } = await request.json();
@@ -73,7 +73,7 @@ export async function PUT(request: NextRequest) {
     });
 
     if (!setting) {
-      return NextResponse.json({ error: "Codice invito non valido" }, { status: 404 });
+      return NextResponse.json({ error: "Codice invito non valido. Chiedi al tuo responsabile un nuovo link." }, { status: 404 });
     }
 
     const company = await prisma.company.findUnique({
@@ -86,25 +86,36 @@ export async function PUT(request: NextRequest) {
     }
 
     // Check if user exists
-    const user = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    if (user) {
-      if (user.companyId === company.id) {
-        return NextResponse.json({ message: "Sei gia parte del team", companyName: company.nome });
+    if (existingUser) {
+      if (existingUser.companyId === company.id) {
+        return NextResponse.json({ message: "Fai gia parte del team!", companyName: company.nome });
       }
       // Link existing user to company
       await prisma.user.update({
         where: { email },
         data: { companyId: company.id, ruolo: "operator" },
       });
+    } else {
+      // Pre-create user stub — when they login via Google/email, NextAuth
+      // finds this record and links the OAuth account to it
+      await prisma.user.create({
+        data: {
+          email,
+          companyId: company.id,
+          ruolo: "operator",
+        },
+      });
     }
 
     return NextResponse.json({
-      message: "Invito valido",
+      message: "Benvenuto nel team!",
       companyId: company.id,
       companyName: company.nome,
     });
-  } catch {
-    return NextResponse.json({ error: "Errore" }, { status: 500 });
+  } catch (e) {
+    console.error("Join error:", e);
+    return NextResponse.json({ error: "Errore. Riprova." }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, Mic, Square, X, Download, Truck, FileText, Shield, HelpCircle } from "lucide-react";
+import { Send, Paperclip, Mic, Square, X, Download, Truck, Shield, HelpCircle, Users, Camera } from "lucide-react";
 
 // --- Types ---
 interface Attachment {
@@ -34,8 +34,9 @@ const WELCOME: Message = {
 const QUICK_ACTIONS = [
   { label: "Ordini di oggi", icon: Truck, message: "Quali ordini ho in attesa oggi?" },
   { label: "Scadenze documenti", icon: Shield, message: "Ci sono documenti in scadenza?" },
-  { label: "Scarica report autisti", icon: Download, message: "Mandami il report degli autisti" },
-  { label: "Scarica report flotta", icon: FileText, message: "Mandami il report della flotta" },
+  { label: "Manda un documento", icon: Camera, message: "Voglio mandare una foto di un documento (patente, tessera sanitaria, CQC)" },
+  { label: "Scarica report", icon: Download, message: "Mandami il report degli autisti e della flotta" },
+  { label: "Invita un collega", icon: Users, message: "Come faccio a invitare un collega sul team?" },
   { label: "Come funziona?", icon: HelpCircle, message: "Come funziona FleetMind? Spiegamelo in modo semplice" },
 ];
 
