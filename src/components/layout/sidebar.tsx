@@ -23,6 +23,7 @@ import {
   Zap,
   ArrowRight,
   Clock,
+  MessageCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Ordini", href: "/orders", icon: Package },
   { name: "AI Dispatch", href: "/dispatch", icon: Brain },
+  { name: "Assistente AI", href: "/chat", icon: MessageCircle, badge: "NEW" },
   { name: "Viaggi", href: "/trips", icon: Route },
   { name: "Compliance", href: "/compliance", icon: ShieldCheck },
   { name: "Autisti", href: "/drivers", icon: Users },
@@ -137,6 +139,11 @@ export function Sidebar({ isDemoUser = false, trialDaysLeft = null }: Props) {
               {item.name === "AI Dispatch" && (
                 <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-amber-400/20 text-amber-400 font-semibold">
                   AI
+                </span>
+              )}
+              {"badge" in item && item.badge && (
+                <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-400 font-semibold">
+                  {item.badge}
                 </span>
               )}
             </Link>
